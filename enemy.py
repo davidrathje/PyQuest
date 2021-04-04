@@ -37,6 +37,4 @@ class Enemy(Hero):
         if self.hp <= 0:
             hero.gold += self.gold
             hero.xp += self.xp
-            hero.battle = False
-            hero.flee = False
             return self.xp, self.gold

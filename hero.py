@@ -42,7 +42,7 @@ class Hero:
 
         return hero_attack
 
-    def flee(self, enemy):
+    def flee(self):
         if self.flee:
             message = "```You may only flee once.```"
         elif random.randint(0, 3) == 1:
@@ -52,15 +52,13 @@ class Hero:
             self.flee = True
             message = "```You failed to escape.```"
 
-        return message, enemy
-
+        return message
 
     def heal(self, amount):
         self.hp += amount
         if self.hp > self.max_hp:
             self.hp = self.max_hp
         return amount
-
 
     def get_level(self):
         if self.xp > self.next_lvl:
@@ -78,7 +76,6 @@ class Hero:
 
             return True
 
-
     def get_item(self):
         if len(self.inventory) >= 3:
             message = "```Your inventory is full.```"
@@ -88,56 +85,34 @@ class Hero:
             message = f"```You found {item.name}.```"
         return message
 
-
     def get_inventory(self):
         inventory = '\n'.join(self.inventory)
         return inventory
 
-    def get_equipped(self):
+    def get_equipped_items(self):
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
         weapon = f"{self.equipped_weapon['name']: <16}"
-
-        for key, value in self.equipped_weapon.items():
-            if key == 'attack':
-                weapon += f" 🗡️{value}"
-            elif key == 'defense':
-                weapon += f" 🦾{value}"
-            elif key == 'critical':
-                weapon += f" 🤺{value}"
-            elif key == 'dodge':
-                weapon += f" 🤸‍♂{value}"
+        for k, v in self.equipped_weapon['stats'].items():
+            weapon += stats[k] + str(v)
 
         shield = f"{self.equipped_shield['name']: <16}"
-
-        for key, value in self.equipped_shield.items():
-            if key == 'attack':
-                shield += f" 🗡️{value}"
-            elif key == 'defense':
-                shield += f" 🦾{value}"
-            elif key == 'critical':
-                shield += f" 🤺{value}"
-            elif key == 'dodge':
-                shield += f" 🤸‍♂{value}"
+        for k, v in self.equipped_shield['stats'].items():
+            shield += stats[k] + str(v)
 
         armor = f"{self.equipped_armor['name']: <16}"
-
-        for key, value in self.equipped_armor.items():
-            if key == 'attack':
-                armor += f" 🗡️{value}"
-            elif key == 'defense':
-                armor += f" 🦾{value}"
-            elif key == 'critical':
-                armor += f" 🤺{value}"
-            elif key == 'dodge':
-                armor += f" 🤸‍♂{value}"
+        for k, v in self.equipped_armor['stats'].items():
+            armor += stats[k] + str(v)
 
         return weapon, shield, armor
 
     def equip_gear(self):
         self.attack = self.base_atk
+        self.attack = self.base_atk
         self.defense = self.base_def
         self.dodge = self.base_dodge
         self.critical = self.base_crit
-        for d in self.equipped_weapon, self.equipped_armor, self.equipped_shield:
+
+        for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
             for key, value in d.items():
                 if key == 'attack':
                     self.attack += value
@@ -164,27 +139,18 @@ class Warrior(Hero):
 
         self.equipped_weapon = {'name': 'Rusty Longsword',
                                 'type': 'Weapon',
-                                'attack': 5,
-                                'critical': 5,
-                                'dodge': 5,
-                                'durability': 10,
-                                'max_durability': 15
+                                'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
                                 }
 
         self.equipped_shield = {'name': 'Kite Shield',
                                 'type': 'Offhand',
-                                'defense': 5,
-                                'dodge': 5,
-                                'durability': 15,
-                                'max_durability': 15
+                                'stats': {'defense': 5, 'dodge': 5}
                                 }
 
         self.equipped_armor = {'name': 'Plate Armor',
                                'type': 'Armor',
-                               'defense': 5,
-                               'dodge': 5,
-                               'durability': 15,
-                               'max_durability': 15}
+                               'stats': {'defense': 5, 'dodge': 5}
+                               }
 
 
 class Wizard(Hero):
@@ -200,23 +166,20 @@ class Wizard(Hero):
 
         self.inventory = ['Bronze Longsword', 'Mana Potion']
 
-        self.equipped_weapon = {'name': 'Wooden Staff',
+        self.equipped_weapon = {'name': 'Wand',
                                 'type': 'Weapon',
-                                'attack': 5,
-                                'durability': 10,
-                                'max_durability': 15}
+                                'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
+                                }
 
-        self.equipped_shield = {'name': 'Kite Shield',
+        self.equipped_shield = {'name': 'Lantern',
                                 'type': 'Offhand',
-                                'defense': 5,
-                                'durability': 15,
-                                'max_durability': 15}
+                                'stats': {'defense': 1, 'dodge': 1}
+                                }
 
         self.equipped_armor = {'name': 'Cloth Robe',
                                'type': 'Armor',
-                               'defense': 2,
-                               'durability': 15,
-                               'max_durability': 15}
+                               'stats': {'attack': 4, 'defense': 3, 'dodge': 2}
+                               }
 
 
 class Ranger(Hero):
@@ -232,21 +195,17 @@ class Ranger(Hero):
 
         self.inventory = ['Bronze Longsword', 'Healing Potion']
 
-        self.equipped_weapon = {'name': 'Wooden Bow',
+        self.equipped_weapon = {'name': 'Short Bow',
                                 'type': 'Weapon',
-                                'attack': 5,
-                                'durability': 15,
-                                'max_durability': 15}
+                                'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
+                                }
 
         self.equipped_shield = {'name': 'Quiver',
                                 'type': 'Offhand',
-                                'attack': 5,
-                                'defense:': 3,
-                                'durability': 15,
-                                'max_durability': 15}
+                                'stats': {'critical': 3, 'dodge': 1}
+                                }
 
         self.equipped_armor = {'name': 'Leather Armor',
                                'type': 'Armor',
-                               'defense': 5,
-                               'durability': 10,
-                               'max_durability': 15}
+                               'stats': {'defense': 5, 'dodge': 5}
+                               }

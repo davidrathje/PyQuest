@@ -10,17 +10,18 @@ bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
 async def adventure(hero):
     dice = random.randint(0, 100)
-    if dice <= 75:
+    if dice <= 90:
         enemy = Enemy.create_enemy(hero)
         await battle(hero, enemy)
 
-    elif 75 < dice <= 100:
+    elif 90 < dice <= 100:
         message = hero.get_item()
         await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
 
 
 async def battle(hero, enemy):
+    hero.battle = True
     msg = f"```[ BATTLE ]\n" \
           f"{hero.name}\tvs\t{enemy.name}\n" \
           f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n" \
@@ -55,16 +56,14 @@ async def battle(hero, enemy):
         await battle(hero, enemy)
 
     elif str(reaction) == '🏃':
-        message, enemy = Hero.flee(hero, enemy)
+        message = Hero.flee(hero)
         await hero.ctx.send(message, delete_after=5)
         if hero.flee:
             await battle(hero, enemy)
         else:
-            hero.battle = False
             hero.flee = False
             await hero_info(hero)
 
-    # 50/50 RANDOM FOR A COMPLETE HEAL OR INSTANT DEATH
     elif str(reaction) == '🎲':
         if random.randint(0, 1) == 0:
             hero.heal(hero.max_hp)
@@ -77,11 +76,13 @@ async def battle(hero, enemy):
 
 
 async def hero_info(hero):
-    weapon, shield, armor = hero.get_equipped()
+    weapon, shield, armor = hero.get_equipped_items()
     hero.equip_gear()
-    amount = hero.heal(hero.lvl * 5)
-    await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
-    
+    if hero.battle:
+        hero.battle = False
+        amount = hero.heal(hero.lvl * 5)
+        await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
+
     msg = f"```[ {hero.name.upper()} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
           f"Health: {hero.hp: >4}{'Mana:': >10} {hero.mana: >7}\n"                                          \
           f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
@@ -101,13 +102,14 @@ async def hero_info(hero):
     if str(reaction) == '🗺️':
         await adventure(hero)
 
+
     elif str(reaction) == '🔨':
         await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
         await hero_info(hero)
 
     elif str(reaction) == '💰':
         await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
-        await hero_info(hero)
+        await vendor(hero)
 
 
 async def vendor(hero):

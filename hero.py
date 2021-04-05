@@ -152,12 +152,12 @@ class Warrior(Hero):
         self.type = 'Warrior'
         self.base_hp = 15
         self.base_mana = 0
+        self.cur_hp = self.base_hp
+        self.cur_mana = self.base_mana
         self.base_atk = 5
         self.base_def = 10
         self.base_dodge = 5
         self.base_crit = 10
-
-        self.cur_hp = self.base_hp
 
         self.inventory = [random.choice(random_item_list),
                           random.choice(random_item_list)]
@@ -173,6 +173,8 @@ class Wizard(Hero):
         self.type = 'Ranger'
         self.base_hp = 10
         self.base_mana = 10
+        self.cur_hp = self.base_hp
+        self.cur_mana = self.base_mana
         self.base_atk = 6
         self.base_def = 3
         self.base_dodge = 5
@@ -192,6 +194,8 @@ class Ranger(Hero):
         self.type = 'Ranger'
         self.base_hp = 12
         self.base_mana = 5
+        self.cur_hp = self.base_hp
+        self.cur_mana = self.base_mana
         self.base_atk = 8
         self.base_def = 7
         self.base_dodge = 5

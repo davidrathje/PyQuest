@@ -19,14 +19,14 @@ class Hero:
         self.base_dodge = 0
         self.base_crit = 0
 
-        self.max_hp = self.base_hp
-        self.cur_hp = self.max_hp
-        self.max_mana = self.base_mana
-        self.cur_mana = self.max_mana
-        self.attack = self.base_atk
-        self.defense = self.base_def
-        self.dodge = self.base_dodge
-        self.critical = self.base_crit
+        self.max_hp = 0
+        self.cur_hp = 0
+        self.max_mana = 0
+        self.cur_mana = 0
+        self.attack = 0
+        self.defense = 0
+        self.dodge = 0
+        self.critical = 0
 
         self.inventory = []
 

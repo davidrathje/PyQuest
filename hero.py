@@ -189,7 +189,7 @@ class Ranger(Hero):
     def __init__(self, ctx):
         super().__init__(ctx)
         self.name = ctx.author.name
-        self.type = 'Wizard'
+        self.type = 'Ranger'
         self.base_hp = 12
         self.base_mana = 5
         self.base_atk = 8

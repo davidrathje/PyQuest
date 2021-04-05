@@ -43,11 +43,11 @@ async def hero_info(hero):
 
 async def adventure(hero):
     dice = random.randint(0, 100)
-    if dice <= 75:
+    if dice <= 95:
         enemy = Enemy(hero)
         await battle(hero, enemy)
 
-    elif 75 < dice <= 100:
+    elif 95 < dice <= 100:
         message = hero.get_item()
         await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
@@ -75,7 +75,7 @@ async def battle(hero, enemy):
             if hero.get_level():
                 await hero.ctx.send(f"```You gained a level.```", delete_after=5)
 
-            if random.randint(0, 100) > 90:
+            if random.randint(0, 100) > 95:
                 message = hero.get_item()
                 await hero.ctx.send(message, delete_after=5)
 
@@ -113,11 +113,8 @@ async def battle(hero, enemy):
 
 
 async def vendor(hero):
-    inventory = hero.get_inventory_items()
-
-
     msg = f"```[ VENDOR ]\nWhat would you like to sell?.\n\n" \
-          f"[ INVENTORY ]\n{inventory}\n\n```"
+          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
     reaction, user = await show_msg(hero, msg, msg_reactions)
 

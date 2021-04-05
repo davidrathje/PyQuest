@@ -79,7 +79,7 @@ async def battle(hero, enemy):
         else:
             enemy_attack = Enemy.enemy_attack(enemy, hero)
 
-            if hero.hp <= 0:
+            if hero.cur_hp <= 0:
                 await hero.ctx.send(f'```[ DEATH ]\nYou have been slain by {enemy.name}.```', delete_after=5)
                 await asyncio.sleep(3)
                 await game(hero.ctx)
@@ -138,8 +138,6 @@ async def game(ctx):
 
     reaction, user = await bot.wait_for('reaction_add', check=lambda x, y: str(x) in msg_reactions and y == ctx.author)
     await msg.delete()
-
-    print(msg_reactions[str(reaction)])
 
     hero = Hero(ctx, msg_reactions[str(reaction)])
 

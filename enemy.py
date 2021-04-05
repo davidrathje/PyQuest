@@ -9,6 +9,8 @@ class Enemy(Hero):
         self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
         self.xp = random.randint(2 * self.lvl, 5 * self.lvl)
         self.gold = random.randint(1, 3 * self.lvl)
+        self.max_hp = random.randint(10 * self.lvl, 12 * self.lvl)
+        self.cur_hp = self.max_hp
 
     def enemy_attack(self, hero):
         enemy_damage = random.randint(0, 4 * self.lvl)

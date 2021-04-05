@@ -13,7 +13,7 @@ class Hero:
         self.battle = False
         self.flee = False
 
-        self.base_hp = 15
+        self.base_hp = 0
         self.base_mana = 0
         self.base_atk = 5
         self.base_def = 10
@@ -117,7 +117,7 @@ class Hero:
             self.base_hp = int(self.max_hp + self.lvl * 1.5)
             self.base_mana = int(self.max_mana + self.lvl * 15)
 
-            self.base_atk += self.base_atk * 0.2
+            self.base_atk += int(self.base_atk * 0.2)
             self.base_def += int(self.base_atk * 0.2)
             self.base_dodge += int(self.base_dodge * 0.2)
             self.base_crit += int(self.base_crit * 0.2)
@@ -163,7 +163,6 @@ class Hero:
     def set_equipped_stats(self):
         self.max_hp = self.base_hp
         self.max_mana = self.base_mana
-        self.attack = self.base_atk
         self.attack = self.base_atk
         self.defense = self.base_def
         self.dodge = self.base_dodge

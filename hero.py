@@ -1,5 +1,5 @@
 import random
-from item import *
+from item import random_item_list
 
 
 class Hero:
@@ -14,11 +14,11 @@ class Hero:
         self.flee = False
 
         self.base_hp = None
-        self.base_mana = 0
-        self.base_atk = 5
-        self.base_def = 10
-        self.base_dodge = 5
-        self.base_crit = 10
+        self.base_mana = None
+        self.base_atk = None
+        self.base_def = None
+        self.base_dodge = None
+        self.base_crit = None
 
         if self.type == 'Warrior':
             self.name = ctx.author.name
@@ -29,10 +29,11 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 10
 
-            self.inventory = [random.choice(item_list)]
-            self.equipped_weapon = item_list[9]
-            self.equipped_shield = item_list[8]
-            self.equipped_armor = item_list[7]
+            self.inventory = [random.choice(random_item_list)]
+
+            self.equipped_weapon = random_item_list[9]
+            self.equipped_shield = random_item_list[8]
+            self.equipped_armor = random_item_list[7]
 
         elif self.type == 'Wizard':
             self.name = ctx.author.name
@@ -43,11 +44,11 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 7
 
-            self.inventory = [random.choice(item_list)]
+            self.inventory = [random.choice(random_item_list)]
 
-            self.equipped_weapon = item_list[3]
-            self.equipped_shield = item_list[1]
-            self.equipped_armor = item_list[4]
+            self.equipped_weapon = random_item_list[3]
+            self.equipped_shield = random_item_list[1]
+            self.equipped_armor = random_item_list[4]
 
         elif self.type == 'Ranger':
             self.name = ctx.author.name
@@ -58,11 +59,11 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 10
 
-            self.inventory = [random.choice(item_list)]
+            self.inventory = [random.choice(random_item_list)]
 
-            self.equipped_weapon = item_list[2]
-            self.equipped_shield = item_list[5]
-            self.equipped_armor = item_list[6]
+            self.equipped_weapon = random_item_list[2]
+            self.equipped_shield = random_item_list[5]
+            self.equipped_armor = random_item_list[6]
 
 
         self.max_hp = self.base_hp
@@ -129,17 +130,19 @@ class Hero:
         if len(self.inventory) >= 3:
             message = "```Your inventory is full.```"
         else:
-            item = Item('Rusty Sword', 'Weapon', 1, {'attack': 1, 'critical': 2, 'dodge': 1})
-            # self.inventory.update(item)
+            item = random.choice(random_item_list)
+            self.inventory.append('Hello')
             message = f"```You found {item.name}.```"
         return message
 
     def sell_item(self, item):
         if self.gold > item.value:
+            # TODO
             return item
 
-
-
+    def repair(self):
+        # TODO
+        pass
 
     def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
@@ -168,7 +171,7 @@ class Hero:
 
         return weapon, shield, armor
 
-    def set_equipped_stats(self):
+    def set_base_stats(self):
         self.max_hp = self.base_hp
         self.max_mana = self.base_mana
         self.attack = self.base_atk
@@ -176,6 +179,8 @@ class Hero:
         self.dodge = self.base_dodge
         self.critical = self.base_crit
 
+    def set_equipped_stats(self):
+        self.set_base_stats()
         for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
             for k, v in d.items():
                 setattr(self, k, getattr(self, k) + v)

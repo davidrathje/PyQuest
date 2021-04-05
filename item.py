@@ -6,7 +6,7 @@ class Item:
         self.stats = stats
 
 
-item_list = {
+random_item_list = {
     0: {'name': 'Health Potion',
         'type': 'Consumable',
         'value': 2,

@@ -1,10 +1,11 @@
 from hero import Hero
-from item import item_list
+from item import random_item_list
 import random
 
 class Enemy(Hero):
     def __init__(self, ctx, hero_type):
         super().__init__(ctx, hero_type)
+
         self.name = random.choice(['a giant rat', 'a small coyote', 'a basilisk'])
         self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
         self.xp = random.randint(2 * self.lvl, 5 * self.lvl)
@@ -27,7 +28,7 @@ class Enemy(Hero):
         self.dodge = self.base_dodge
         self.critical = self.base_crit
 
-        self.inventory = [random.choice(item_list)]
+        self.inventory = [random.choice(random_item_list)]
 
         self.equipped_weapon = {}
         self.equipped_shield = {}

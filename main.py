@@ -1,7 +1,9 @@
 from discord.ext import commands
 from settings import PREFIX, TOKEN
-from hero import *
+from hero import Hero
 from enemy import Enemy
+from item import random_item_list
+
 import random
 import asyncio
 
@@ -15,13 +17,13 @@ async def hero_info(hero):
         amount = hero.heal(hero.lvl * 5)
         await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
 
-    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
-          f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n" \
-          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
-          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
-          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
-          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                                                      \
-          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n"                                                      \
+    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n"                     \
+          f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n"          \
+          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"          \
+          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"   \
+          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"    \
+          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                              \
+          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n"                        \
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
@@ -42,7 +44,7 @@ async def hero_info(hero):
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 75:
-        enemy = Enemy(hero, 'Enemy')
+        enemy = Enemy(hero, 'Money')
         await battle(hero, enemy)
 
     elif 75 < dice <= 100:
@@ -53,10 +55,10 @@ async def adventure(hero):
 
 async def battle(hero, enemy):
     hero.battle = True
-    msg = f"```[ BATTLE ]\n" \
-          f"{hero.name}\tvs\t{enemy.name}\n" \
-          f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n" \
-          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n" \
+    msg = f"```[ BATTLE ]\n"                                                            \
+          f"{hero.name}\tvs\t{enemy.name}\n"                                            \
+          f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n"                                      \
+          f"HP {hero.cur_hp}/{hero.max_hp}\t\tHP {enemy.cur_hp}/{enemy.max_hp}\n\n"     \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack', '🏃': 'flee', '🎲': 'dice'}
@@ -72,6 +74,10 @@ async def battle(hero, enemy):
 
             if hero.get_level():
                 await hero.ctx.send(f"```You gained a level.```", delete_after=5)
+
+            if random.randint(0, 100) > 10:
+                message = hero.get_item(hero)
+                await hero.ctx.send(message, delete_after=5)
 
             await hero_info(hero)
         else:
@@ -116,11 +122,15 @@ async def vendor(hero):
     if str(reaction) == '🗺️':
         await hero_info(hero)
 
-    if str(reaction) == '💰':
-        for item in inventory:
-            print(item)
+    # TODO
+    elif str(reaction) == '🔨':
+        await hero.ctx.send(f"```You repaired all broken items.```")
+        await hero_info(hero)
 
-        await hero.ctx.send(f"```You sold.```", delete_after=5)
+    # TODO
+    elif str(reaction) == '💰':
+        item = random.choice(random_item_list)
+        await hero.ctx.send(f"```You sold. {item}```", delete_after=5)
         await vendor(hero)
 
     return reaction, user

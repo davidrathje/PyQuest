@@ -10,14 +10,14 @@ bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
 async def hero_info(hero):
     weapon, shield, armor = hero.get_equipped_items()
-    hero.equip_gear()
+    hero.set_equipped_stats()
     if hero.battle:
         hero.battle = False
         amount = hero.heal(hero.lvl * 5)
         await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
 
-    msg = f"```[ {hero.name.upper()} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
-          f"Health: {hero.hp: >4}{'Mana:'if hero.mana else '': >10} {hero.mana if hero.mana else '': >7}\n" \
+    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
+          f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n" \
           f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
@@ -44,7 +44,7 @@ async def hero_info(hero):
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 75:
-        enemy = Enemy(hero)
+        enemy = Enemy(hero, 'Monster')
         await battle(hero, enemy)
 
     elif 75 < dice <= 100:
@@ -58,7 +58,7 @@ async def battle(hero, enemy):
     msg = f"```[ BATTLE ]\n" \
           f"{hero.name}\tvs\t{enemy.name}\n" \
           f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n" \
-          f"HP {hero.hp}/{hero.max_hp}\t\t HP {enemy.hp}/{enemy.max_hp}\n\n" \
+          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n" \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack', '🏃': 'flee', '🎲': 'dice'}
@@ -139,12 +139,9 @@ async def game(ctx):
     reaction, user = await bot.wait_for('reaction_add', check=lambda x, y: str(x) in msg_reactions and y == ctx.author)
     await msg.delete()
 
-    if str(reaction) == '🛡️':
-        hero = Warrior(ctx)
-    elif str(reaction) == '🪄':
-        hero = Wizard(ctx)
-    else:
-        hero = Ranger(ctx)
+    print(msg_reactions[str(reaction)])
+
+    hero = Hero(ctx, msg_reactions[str(reaction)])
 
     await hero_info(hero)
 

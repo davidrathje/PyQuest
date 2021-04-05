@@ -3,36 +3,75 @@ from item import *
 
 
 class Hero:
-    def __init__(self, ctx):
+    def __init__(self, ctx, hero_type):
         self.ctx = ctx
-        self.name = ctx.message.author.name
-        self.type = str
+        self.type = hero_type
         self.lvl = 1
         self.xp = 0
         self.next_lvl = 15
-
-        self.max_hp = 0
-        self.hp = 0
-        self.max_mana = 0
-        self.mana = 0
-
-        self.base_atk = 0
-        self.base_def = 0
-        self.base_dodge = 0
-        self.base_crit = 0
-        self.attack = 0
-        self.defense = 0
-        self.dodge = 0
-        self.critical = 0
-
-        self.inventory = {}
-        self.equipped_weapon = {}
-        self.equipped_shield = {}
-        self.equipped_armor = {}
-
         self.gold = 0
         self.battle = False
         self.flee = False
+
+        self.base_hp = 15
+        self.base_mana = 0
+        self.base_atk = 5
+        self.base_def = 10
+        self.base_dodge = 5
+        self.base_crit = 10
+
+        if self.type == 'Warrior':
+            self.name = ctx.author.name
+            self.base_hp = 15
+            self.base_mana = 0
+            self.base_atk = 5
+            self.base_def = 10
+            self.base_dodge = 5
+            self.base_crit = 10
+
+            self.inventory = [random.choice(item_list)]
+            self.equipped_weapon = item_list[9]
+            self.equipped_shield = item_list[8]
+            self.equipped_armor = item_list[7]
+
+        elif self.type == 'Wizard':
+            self.name = ctx.author.name
+            self.base_hp = 10
+            self.base_mana = 10
+            self.base_atk = 6
+            self.base_def = 3
+            self.base_dodge = 5
+            self.base_crit = 7
+
+            self.inventory = [random.choice(item_list)]
+
+            self.equipped_weapon = item_list[3]
+            self.equipped_shield = item_list[1]
+            self.equipped_armor = item_list[4]
+
+        elif self.type == 'Ranger':
+            self.name = ctx.author.name
+            self.base_hp = 12
+            self.base_mana = 5
+            self.base_atk = 8
+            self.base_def = 7
+            self.base_dodge = 5
+            self.base_crit = 10
+
+            self.inventory = [random.choice(item_list)]
+
+            self.equipped_weapon = item_list[2]
+            self.equipped_shield = item_list[5]
+            self.equipped_armor = item_list[6]
+
+        self.max_hp = self.base_hp
+        self.cur_hp = self.max_hp
+        self.max_mana = self.base_mana
+        self.cur_mana = self.max_mana
+        self.attack = self.base_atk
+        self.defense = self.base_def
+        self.dodge = self.base_dodge
+        self.critical = self.base_crit
 
 
     def attack(self, enemy):
@@ -40,7 +79,7 @@ class Hero:
         hero_attack = {'miss': f"You miss {enemy.name}.",
                        'point': f"You attack {enemy.name} for {hero_damage} point of damage.",
                        'points': f"You attack {enemy.name} for {hero_damage} points of damage."}
-        enemy.hp = enemy.hp - hero_damage
+        enemy.cur_hp -= hero_damage
 
         if hero_damage == 0:
             hero_attack = hero_attack['miss']
@@ -64,25 +103,24 @@ class Hero:
         return message
 
     def heal(self, amount):
-        self.hp += amount
-        if self.hp > self.max_hp:
-            self.hp = self.max_hp
+        self.cur_hp += amount
+        if self.cur_hp > self.max_hp:
+            self.cur_hp = self.max_hp
         return amount
 
     def get_level(self):
         if self.xp > self.next_lvl:
-            self.lvl = self.lvl + 1
-            self.xp = self.xp - self.next_lvl
-            self.next_lvl = 15 * self.lvl
+            self.lvl += 1
+            self.xp -= self.next_lvl
+            self.next_lvl *= self.lvl
 
-            self.max_hp = round(self.max_hp + self.lvl * 1.5)
-            self.hp = self.max_hp
-            self.mana = round(self.max_mana + self.lvl * 15)
+            self.base_hp = int(self.max_hp + self.lvl * 1.5)
+            self.base_mana = int(self.max_mana + self.lvl * 15)
 
             self.base_atk += self.base_atk * 0.2
             self.base_def += int(self.base_atk * 0.2)
             self.base_dodge += int(self.base_dodge * 0.2)
-            self.critical += int(self.base_crit * 0.2)
+            self.base_crit += int(self.base_crit * 0.2)
 
             return True
 
@@ -122,9 +160,9 @@ class Hero:
 
         return weapon, shield, armor
 
-    def equip_gear(self):
-        self.hp = self.max_hp
-        self.mana = self.max_mana
+    def set_equipped_stats(self):
+        self.max_hp = self.base_hp
+        self.max_mana = self.base_mana
         self.attack = self.base_atk
         self.attack = self.base_atk
         self.defense = self.base_def
@@ -134,68 +172,3 @@ class Hero:
         for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
             for k, v in d.items():
                 setattr(self, k, getattr(self, k)+v)
-
-
-class Warrior(Hero):
-    def __init__(self, ctx):
-        super().__init__(ctx)
-        self.type = 'Warrior'
-        self.max_hp = 15
-        self.hp = self.max_hp
-        self.max_mana = 0
-        self.mana = self.max_mana
-        self.base_atk = 5
-        self.base_def = 10
-        self.dodge = 5
-        self.critical = 10
-
-        self.inventory = [random.choice(item_list)]
-
-        self.equipped_weapon = item_list[9]
-
-        self.equipped_shield = item_list[8]
-
-        self.equipped_armor = item_list[7]
-
-
-class Wizard(Hero):
-    def __init__(self, ctx):
-        super().__init__(ctx)
-        self.type = 'Wizard'
-        self.max_hp = 10
-        self.hp = self.max_hp
-        self.max_mana = 10
-        self.mana = self.max_mana
-        self.defense = 5
-        self.dodge = 5
-        self.critical = 5
-
-        self.inventory = [random.choice(item_list)]
-
-        self.equipped_weapon = item_list[3]
-
-        self.equipped_shield = item_list[1]
-
-        self.equipped_armor = item_list[4]
-
-
-class Ranger(Hero):
-    def __init__(self, ctx):
-        super().__init__(ctx)
-        self.type = 'Ranger'
-        self.max_hp = 12
-        self.hp = self.max_hp
-        self.max_mana = 5
-        self.mana = self.max_mana
-        self.attack = 8
-        self.defense = 7
-        self.dodge = 5
-        self.critical = 5
-
-        self.inventory = []
-
-        self.equipped_weapon = item_list[2]
-
-        self.equipped_shield = item_list[5]
-
-        self.equipped_armor = item_list[6]

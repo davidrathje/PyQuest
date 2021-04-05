@@ -76,7 +76,7 @@ async def battle(hero, enemy):
                 await hero.ctx.send(f"```You gained a level.```", delete_after=5)
 
             if random.randint(0, 100) > 10:
-                message = hero.get_item(hero)
+                message = hero.get_item()
                 await hero.ctx.send(message, delete_after=5)
 
             await hero_info(hero)

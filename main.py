@@ -1,6 +1,6 @@
 from discord.ext import commands
 from settings import PREFIX, TOKEN
-from hero import *
+from hero import Warrior, Wizard, Ranger
 from enemy import Enemy
 from item import random_item_list
 
@@ -43,11 +43,11 @@ async def hero_info(hero):
 
 async def adventure(hero):
     dice = random.randint(0, 100)
-    if dice <= 0:
+    if dice <= 90:
         enemy = Enemy(hero)
         await battle(hero, enemy)
 
-    elif 0 < dice <= 100:
+    elif 90 < dice <= 100:
         message = hero.get_item()
         await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
@@ -65,7 +65,7 @@ async def battle(hero, enemy):
     reaction, user = await show_msg(hero, msg, msg_reactions)
 
     if str(reaction) == '🗡️':
-        hero_attack = Hero.hero_attack(hero, enemy)
+        hero_attack = hero.hero_attack(enemy)
         if Enemy.enemy_died(enemy, hero):
             xp, gold = Enemy.enemy_died(enemy, hero)
             await hero.ctx.send(f"```{hero_attack}\n"
@@ -94,12 +94,12 @@ async def battle(hero, enemy):
         await battle(hero, enemy)
 
     elif str(reaction) == '🏃':
-        message = Hero.flee(hero)
+        message = hero.flee()
         await hero.ctx.send(message, delete_after=5)
-        if hero.flee:
+        if hero.flee_attempt:
             await battle(hero, enemy)
         else:
-            hero.flee = False
+            hero.flee_attempt = False
             await hero_info(hero)
 
     elif str(reaction) == '🎲':

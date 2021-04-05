@@ -10,7 +10,7 @@ class Hero:
         self.next_lvl = 15
         self.gold = 0
         self.battle = False
-        self.flee = False
+        self.flee_attempt = False
 
         self.max_hp = 0
         self.max_mana = 0
@@ -61,7 +61,7 @@ class Hero:
             self.battle = False
             message = "```You managed to escape.```"
         else:
-            self.flee = True
+            self.flee_attempt = True
             message = "```You failed to escape.```"
 
         return message

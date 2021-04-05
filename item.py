@@ -12,13 +12,11 @@ random_item_list = {
         'value': 2,
         'stats': {'health': 10}
         },
-
     1: {'name': 'Lantern',
         'type': 'Offhand',
         'value': 0,
         'stats': {'defense': 1, 'dodge': 1}
         },
-
     2: {'name': 'Short Bow',
         'type': 'Weapon',
         'value': 2,

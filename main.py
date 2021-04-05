@@ -12,6 +12,7 @@ bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 async def hero_info(hero):
     weapon, shield, armor = hero.get_equipped_items()
     hero.set_equipped_stats()
+    inventory = hero.get_inventory_items()
     if hero.battle:
         hero.battle = False
         amount = hero.heal(hero.lvl * 5)
@@ -23,7 +24,7 @@ async def hero_info(hero):
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"   \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"    \
           f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                              \
-          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n"                        \
+          f"[ INVENTORY ]\n{inventory}\n\n"                        \
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
@@ -75,7 +76,7 @@ async def battle(hero, enemy):
             if hero.get_level():
                 await hero.ctx.send(f"```You gained a level.```", delete_after=5)
 
-            if random.randint(0, 100) > 10:
+            if random.randint(0, 100) > 90:
                 message = hero.get_item()
                 await hero.ctx.send(message, delete_after=5)
 
@@ -114,6 +115,8 @@ async def battle(hero, enemy):
 
 async def vendor(hero):
     inventory = hero.get_inventory_items()
+
+
     msg = f"```[ VENDOR ]\nWhat would you like to sell?.\n\n" \
           f"[ INVENTORY ]\n{inventory}\n\n```"
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}

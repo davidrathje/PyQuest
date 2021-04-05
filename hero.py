@@ -29,7 +29,8 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 10
 
-            self.inventory = [random.choice(random_item_list)]
+            self.inventory = [random.choice(random_item_list),
+                              random.choice(random_item_list)]
 
             self.equipped_weapon = random_item_list[9]
             self.equipped_shield = random_item_list[8]
@@ -44,7 +45,8 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 7
 
-            self.inventory = [random.choice(random_item_list)]
+            self.inventory = [random.choice(random_item_list),
+                              random.choice(random_item_list)]
 
             self.equipped_weapon = random_item_list[3]
             self.equipped_shield = random_item_list[1]
@@ -59,7 +61,8 @@ class Hero:
             self.base_dodge = 5
             self.base_crit = 10
 
-            self.inventory = [random.choice(random_item_list)]
+            self.inventory = [random.choice(random_item_list),
+                              random.choice(random_item_list)]
 
             self.equipped_weapon = random_item_list[2]
             self.equipped_shield = random_item_list[5]
@@ -81,7 +84,6 @@ class Hero:
         hero_attack = {'miss': f"You miss {enemy.name}.",
                        'point': f"You attack {enemy.name} for {hero_damage} point of damage.",
                        'points': f"You attack {enemy.name} for {hero_damage} points of damage."}
-        enemy.cur_hp -= hero_damage
 
         if hero_damage == 0:
             hero_attack = hero_attack['miss']
@@ -89,6 +91,12 @@ class Hero:
             hero_attack = hero_attack['point']
         elif hero_damage > 1:
             hero_attack = hero_attack['points']
+
+        if random.randint(int(self.critical * 0.2), 3) == 3:
+            hero_damage *= 2
+            hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
+
+        enemy.cur_hp -= hero_damage
 
         return hero_attack
 
@@ -130,9 +138,7 @@ class Hero:
         if len(self.inventory) >= 3:
             message = "```Your inventory is full.```"
         else:
-            item = random.choice(random_item_list)
-            self.inventory.append('Hello')
-            message = f"```You found {item.name}.```"
+            message = f"```You found something.```"
         return message
 
     def sell_item(self, item):
@@ -145,7 +151,7 @@ class Hero:
         pass
 
     def get_inventory_items(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤'}
         inventory = ""
         for item in self.inventory:
             inventory += f"{item['name']: <16}"

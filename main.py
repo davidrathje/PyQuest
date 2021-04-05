@@ -43,11 +43,11 @@ async def hero_info(hero):
 
 async def adventure(hero):
     dice = random.randint(0, 100)
-    if dice <= 95:
+    if dice <= 0:
         enemy = Enemy(hero)
         await battle(hero, enemy)
 
-    elif 95 < dice <= 100:
+    elif 0 < dice <= 100:
         message = hero.get_item()
         await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
@@ -80,6 +80,7 @@ async def battle(hero, enemy):
                 await hero.ctx.send(message, delete_after=5)
 
             await hero_info(hero)
+
         else:
             enemy_attack = Enemy.enemy_attack(enemy, hero)
 
@@ -151,7 +152,7 @@ async def show_msg(hero, msg, msg_reactions):
 @bot.command(aliases=['g'])
 async def game(ctx):
     msg = await ctx.send("```[ PyQuest ]\nWelcome to PyQuest\n\nPlease choose your hero.```")
-    msg_reactions = {'🛡️': 'Warrior', '🪄': 'Wizard', '🏹': 'Ranger'}
+    msg_reactions = {'🛡️': 'Warrior', '🏹': 'Ranger', '🪄': 'Wizard'}
     for reaction in msg_reactions:
         await msg.add_reaction(reaction)
 
@@ -160,10 +161,10 @@ async def game(ctx):
 
     if str(reaction) == '🛡️':
         hero = Warrior(ctx)
-    elif str(reaction) == '🪄':
-        hero = Wizard(ctx)
-    else:
+    elif str(reaction) == '🏹':
         hero = Ranger(ctx)
+    else:
+        hero = Wizard(ctx)
 
     await hero_info(hero)
 

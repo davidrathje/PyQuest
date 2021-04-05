@@ -12,6 +12,10 @@ class Hero:
         self.battle = False
         self.flee = False
 
+        self.max_hp = 0
+        self.max_mana = 0
+        self.cur_hp = 0
+        self.cur_mana = 0
         self.base_hp = 0
         self.base_mana = 0
         self.base_atk = 0
@@ -19,10 +23,7 @@ class Hero:
         self.base_dodge = 0
         self.base_crit = 0
 
-        self.max_hp = 0
-        self.cur_hp = 0
-        self.max_mana = 0
-        self.cur_mana = 0
+
         self.attack = 0
         self.defense = 0
         self.dodge = 0
@@ -89,9 +90,11 @@ class Hero:
             return True
 
     def get_item(self):
-        if len(self.inventory) >= 3:
+        if len(self.inventory) > 3:
             message = "```Your inventory is full.```"
         else:
+            item = random.choice(random_item_list)
+            self.inventory.append(item)
             message = f"```You found something.```"
         return message
 

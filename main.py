@@ -23,7 +23,7 @@ async def hero_info(hero):
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"   \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"    \
           f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                              \
-          f"[ INVENTORY ]\n{inventory}\n\n"                        \
+          f"[ INVENTORY ]\n{inventory}\n\n"                                         \
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
@@ -33,7 +33,8 @@ async def hero_info(hero):
         await adventure(hero)
 
     elif str(reaction) == '🔨':
-        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
+        message = hero.buy_item(random_item_list[0])
+        await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
 
     elif str(reaction) == '💰':
@@ -57,7 +58,7 @@ async def battle(hero, enemy):
     msg = f"```[ BATTLE ]\n"                                                            \
           f"{hero.name}\tvs\t{enemy.name}\n"                                            \
           f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n"                                      \
-          f"HP {hero.cur_hp}/{hero.max_hp}\t\tHP {enemy.cur_hp}/{enemy.max_hp}\n\n"     \
+          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n"    \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack', '🏃': 'flee', '🎲': 'dice'}
@@ -128,8 +129,8 @@ async def vendor(hero):
 
     # TODO
     elif str(reaction) == '💰':
-        item = random.choice(random_item_list)
-        await hero.ctx.send(f"```You sold. {item.values('name')}```", delete_after=5)
+        message = hero.sell_item()
+        await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
 
     return reaction, user

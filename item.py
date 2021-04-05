@@ -24,38 +24,38 @@ random_item_list = {
         },
     3: {'name': 'Wand',
         'type': 'Weapon',
-        'value': 0,
+        'value': 4,
         'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
         },
     4: {'name': 'Cloth Robe',
         'type': 'Armor',
-        'value': 0,
+        'value': 5,
         'stats': {'attack': 4, 'defense': 3, 'dodge': 2}
         },
     5: {'name': 'Quiver',
         'type': 'Offhand',
-        'value': 0,
+        'value': 3,
         'stats': {'critical': 3, 'dodge': 1}
         },
     6: {'name': 'Leather Armor',
         'type': 'Armor',
-        'value': 0,
+        'value': 5,
         'stats': {'defense': 5, 'dodge': 5}
         },
     7:
         {'name': 'Plate Armor',
          'type': 'Armor',
-         'value': 0,
+         'value': 2,
          'stats': {'defense': 5, 'dodge': 5}
          },
     8: {'name': 'Kite Shield',
         'type': 'Offhand',
-        'value': 0,
+        'value': 1,
         'stats': {'defense': 5, 'dodge': 5}
         },
     9: {'name': 'Kite Shield',
         'type': 'Offhand',
-        'value': 0,
+        'value': 6,
         'stats': {'defense': 5, 'dodge': 5}
         }
 }

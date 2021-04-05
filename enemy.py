@@ -36,7 +36,7 @@ class Enemy(Hero):
 
     def enemy_attack(self, hero):
         enemy_damage = random.randint(0, 4 * self.lvl)
-        hero.cur_hp = hero.cur_hp - enemy_damage
+        hero.cur_hp -= enemy_damage
 
         if enemy_damage == 0:
             enemy_attack = f"{self.name.capitalize()} miss."

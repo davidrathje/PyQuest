@@ -8,7 +8,7 @@ class Hero:
         self.lvl = 1
         self.xp = 0
         self.next_lvl = 15
-        self.gold = 0
+        self.gold = 10
         self.battle = False
         self.flee = False
 
@@ -28,7 +28,7 @@ class Hero:
         self.dodge = 0
         self.critical = 0
 
-        self.inventory = []
+        self.inventory = [random.choice(random_item_list), random.choice(random_item_list)]
 
         self.equipped_weapon = {}
         self.equipped_shield = {}
@@ -97,18 +97,34 @@ class Hero:
             message = f"```You found a {item['name']}.```"
         return message
 
-    def sell_item(self, item):
-        if self.gold > item.value:
-            # TODO
-            return item
+    def sell_item(self):
+        for i, d in enumerate(self.inventory):
+            del self.inventory[i]
+            self.gold += d['value']
 
+            return f"```You sold {d['name']} for {d['value']} gold.```"
+        return f"```Your inventory is empty.```"
+
+    # TODO
+    def buy_item(self, item):
+        if self.gold > item['value']:
+            if len(self.inventory) < 4:
+                self.inventory.append(item)
+                self.gold -= item['value']
+            else:
+                return f"```Your inventory is full.```"
+
+            return f"```You bought {item['name']} for {item['value']} gold.```"
+        return f"```You can't afford that item.```"
+
+    # TODO
     def use_item(self, item):
         if item.name in self.inventory:
-            # TODO
+
             return item
 
-    def repair(self):
-        # TODO
+    # TODO
+    def repair_item(self):
         pass
 
     def get_inventory_items(self):

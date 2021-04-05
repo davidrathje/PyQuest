@@ -94,11 +94,16 @@ class Hero:
         else:
             item = random.choice(random_item_list)
             self.inventory.append(item)
-            message = f"```You found {item['name']}```"
+            message = f"```You found a {item['name']}.```"
         return message
 
     def sell_item(self, item):
         if self.gold > item.value:
+            # TODO
+            return item
+
+    def use_item(self, item):
+        if item.name in self.inventory:
             # TODO
             return item
 

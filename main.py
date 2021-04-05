@@ -17,7 +17,7 @@ async def hero_info(hero):
         await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
 
     msg = f"```[ {hero.name.upper()} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
-          f"Health: {hero.hp: >4}{'Mana:': >10} {hero.mana: >7}\n"                                          \
+          f"Health: {hero.hp: >4}{'Mana:'if hero.mana else '': >10} {hero.mana if hero.mana else '': >7}\n" \
           f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
@@ -43,11 +43,11 @@ async def hero_info(hero):
 
 async def adventure(hero):
     dice = random.randint(0, 100)
-    if dice <= 90:
-        enemy = Enemy.create_enemy(hero)
+    if dice <= 75:
+        enemy = Enemy(hero)
         await battle(hero, enemy)
 
-    elif 90 < dice <= 100:
+    elif 75 < dice <= 100:
         message = hero.get_item()
         await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
@@ -140,11 +140,11 @@ async def game(ctx):
     await msg.delete()
 
     if str(reaction) == '🛡️':
-        hero = Warrior(ctx, user.name, msg_reactions[str(reaction)])
+        hero = Warrior(ctx)
     elif str(reaction) == '🪄':
-        hero = Wizard(ctx, user.name, msg_reactions[str(reaction)])
+        hero = Wizard(ctx)
     else:
-        hero = Ranger(ctx, user.name, msg_reactions[str(reaction)])
+        hero = Ranger(ctx)
 
     await hero_info(hero)
 

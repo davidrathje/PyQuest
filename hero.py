@@ -1,44 +1,53 @@
 import random
-from item import Item
+from item import *
 
 
 class Hero:
-    def __init__(self, ctx, name, hero_type):
+    def __init__(self, ctx):
         self.ctx = ctx
-        self.name = name
-        self.type = hero_type
+        self.name = ctx.message.author.name
+        self.type = str
         self.lvl = 1
         self.xp = 0
         self.next_lvl = 15
-        self.max_hp = 10
-        self.hp = self.max_hp
+
+        self.max_hp = 0
+        self.hp = 0
+        self.max_mana = 0
         self.mana = 0
-        self.base_atk = 5
-        self.base_def = 5
-        self.base_dodge = 5
-        self.base_crit = 5
-        self.attack = self.base_atk
-        self.defense = self.base_def
-        self.dodge = 5
-        self.critical = 5
-        self.gold = 0
+
+        self.base_atk = 0
+        self.base_def = 0
+        self.base_dodge = 0
+        self.base_crit = 0
+        self.attack = 0
+        self.defense = 0
+        self.dodge = 0
+        self.critical = 0
+
         self.inventory = {}
+        self.equipped_weapon = {}
+        self.equipped_shield = {}
+        self.equipped_armor = {}
+
+        self.gold = 0
         self.battle = False
         self.flee = False
-        self.equipped_weapon = None
-        self.equipped_shield = None
-        self.equipped_armor = None
+
 
     def attack(self, enemy):
         hero_damage = random.randint(0, 4 * self.lvl)
+        hero_attack = {'miss': f"You miss {enemy.name}.",
+                       'point': f"You attack {enemy.name} for {hero_damage} point of damage.",
+                       'points': f"You attack {enemy.name} for {hero_damage} points of damage."}
         enemy.hp = enemy.hp - hero_damage
 
         if hero_damage == 0:
-            hero_attack = "You miss " + enemy.name + "."
+            hero_attack = hero_attack['miss']
         elif hero_damage == 1:
-            hero_attack = "You attack " + enemy.name + " for " + str(hero_damage) + " point of damage."
-        else:
-            hero_attack = "You attack " + enemy.name + " for " + str(hero_damage) + " points of damage."
+            hero_attack = hero_attack['point']
+        elif hero_damage > 1:
+            hero_attack = hero_attack['points']
 
         return hero_attack
 
@@ -66,10 +75,11 @@ class Hero:
             self.xp = self.xp - self.next_lvl
             self.next_lvl = 15 * self.lvl
 
-            self.max_hp = round(self.max_hp + (1.5 * self.lvl))
+            self.max_hp = round(self.max_hp + self.lvl * 1.5)
             self.hp = self.max_hp
+            self.mana = round(self.max_mana + self.lvl * 15)
 
-            self.base_atk += int(self.base_atk * 0.2)
+            self.base_atk += self.base_atk * 0.2
             self.base_def += int(self.base_atk * 0.2)
             self.base_dodge += int(self.base_dodge * 0.2)
             self.critical += int(self.base_crit * 0.2)
@@ -81,12 +91,12 @@ class Hero:
             message = "```Your inventory is full.```"
         else:
             item = Item('Rusty Sword', 'Weapon', 1, {'attack': 1, 'critical': 2, 'dodge': 1})
-            self.inventory.pop(item)
+            # self.inventory.update(item)
             message = f"```You found {item.name}.```"
         return message
 
     def get_inventory(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': '🤸‍♂'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
         inventory = ""
         for item in self.inventory:
             inventory += f"{item['name']: <16}"
@@ -97,7 +107,7 @@ class Hero:
         return inventory
 
     def get_equipped_items(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': '🤸‍♂'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
         weapon = f"{self.equipped_weapon['name']: <16}"
         for k, v in self.equipped_weapon['stats'].items():
             weapon += stats[k] + str(v)
@@ -113,6 +123,8 @@ class Hero:
         return weapon, shield, armor
 
     def equip_gear(self):
+        self.hp = self.max_hp
+        self.mana = self.max_mana
         self.attack = self.base_atk
         self.attack = self.base_atk
         self.defense = self.base_def
@@ -120,135 +132,70 @@ class Hero:
         self.critical = self.base_crit
 
         for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
-            for key, value in d.items():
-                if key == 'attack':
-                    self.attack += value
-                elif key == 'defense':
-                    self.defense += value
-                elif key == 'critical':
-                    self.critical += value
-                elif key == 'dodge':
-                    self.dodge += value
+            for k, v in d.items():
+                setattr(self, k, getattr(self, k)+v)
 
 
 class Warrior(Hero):
-    def __init__(self, ctx, name, hero_type):
-        super().__init__(ctx, name, hero_type)
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Warrior'
         self.max_hp = 15
         self.hp = self.max_hp
-        self.mana = 0
+        self.max_mana = 0
+        self.mana = self.max_mana
         self.base_atk = 5
         self.base_def = 10
         self.dodge = 5
         self.critical = 10
 
-        self.inventory = [{'name': 'Short Bow',
-                           'type': 'Weapon',
-                           'value': 2,
-                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
-                           },
-                          {'name': 'Lantern',
-                           'type': 'Offhand',
-                           'value': 0,
-                           'stats': {'defense': 1, 'dodge': 1}
-                           }]
+        self.inventory = [random.choice(item_list)]
 
-        self.equipped_weapon = {'name': 'Rusty Longsword',
-                                'type': 'Weapon',
-                                'value': 0,
-                                'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
-                                }
+        self.equipped_weapon = item_list[9]
 
-        self.equipped_shield = {'name': 'Kite Shield',
-                                'type': 'Offhand',
-                                'value': 0,
-                                'stats': {'defense': 5, 'dodge': 5}
-                                }
+        self.equipped_shield = item_list[8]
 
-        self.equipped_armor = {'name': 'Plate Armor',
-                               'type': 'Armor',
-                               'value': 0,
-                               'stats': {'defense': 5, 'dodge': 5}
-                               }
+        self.equipped_armor = item_list[7]
 
 
 class Wizard(Hero):
-    def __init__(self, ctx, name, hero_type):
-        super().__init__(ctx, name, hero_type)
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Wizard'
         self.max_hp = 10
         self.hp = self.max_hp
-        self.mana = 10
-        self.attack = 10
+        self.max_mana = 10
+        self.mana = self.max_mana
         self.defense = 5
         self.dodge = 5
         self.critical = 5
 
-        self.inventory = [{'name': 'Short Bow',
-                           'type': 'Weapon',
-                           'value': 2,
-                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
-                           },
-                          {'name': 'Lantern',
-                           'type': 'Offhand',
-                           'value': 0,
-                           'stats': {'defense': 1, 'dodge': 1}
-                           }]
+        self.inventory = [random.choice(item_list)]
 
-        self.equipped_weapon = {'name': 'Wand',
-                                'type': 'Weapon',
-                                'value': 0,
-                                'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
-                                }
+        self.equipped_weapon = item_list[3]
 
-        self.equipped_shield = {'name': 'Lantern',
-                                'type': 'Offhand',
-                                'value': 0,
-                                'stats': {'defense': 1, 'dodge': 1}
-                                }
+        self.equipped_shield = item_list[1]
 
-        self.equipped_armor = {'name': 'Cloth Robe',
-                               'type': 'Armor',
-                               'value': 0,
-                               'stats': {'attack': 4, 'defense': 3, 'dodge': 2}
-                               }
+        self.equipped_armor = item_list[4]
 
 
 class Ranger(Hero):
-    def __init__(self, ctx, name, hero_type):
-        super().__init__(ctx, name, hero_type)
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Ranger'
         self.max_hp = 12
         self.hp = self.max_hp
-        self.mana = 5
+        self.max_mana = 5
+        self.mana = self.max_mana
         self.attack = 8
         self.defense = 7
         self.dodge = 5
         self.critical = 5
 
-        self.inventory = [{'name': 'Short Bow',
-                           'type': 'Weapon',
-                           'value': 2,
-                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
-                           },
-                          {'name': 'Lantern',
-                           'type': 'Offhand',
-                           'value': 0,
-                           'stats': {'defense': 1, 'dodge': 1}
-                           }]
+        self.inventory = []
 
-        self.equipped_weapon = {'name': 'Short Bow',
-                                'type': 'Weapon',
-                                'value': 0,
-                                'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
-                                }
+        self.equipped_weapon = item_list[2]
 
-        self.equipped_shield = {'name': 'Quiver',
-                                'type': 'Offhand',
-                                'value': 0,
-                                'stats': {'critical': 3, 'dodge': 1}
-                                }
+        self.equipped_shield = item_list[5]
 
-        self.equipped_armor = {'name': 'Leather Armor',
-                               'type': 'Armor',
-                               'value': 0,
-                               'stats': {'defense': 5, 'dodge': 5}
-                               }
+        self.equipped_armor = item_list[6]

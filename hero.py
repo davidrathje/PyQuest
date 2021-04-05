@@ -186,24 +186,6 @@ class Warrior(Hero):
         self.equipped_shield = random_item_list[8]
         self.equipped_armor = random_item_list[7]
 
-class Wizard(Hero):
-    def __init__(self, ctx):
-        super().__init__(ctx)
-        self.name = ctx.author.name
-        self.type = 'Ranger'
-        self.base_hp = 10
-        self.base_mana = 10
-        self.cur_hp = self.base_hp
-        self.cur_mana = self.base_mana
-        self.base_atk = 6
-        self.base_def = 3
-        self.base_dodge = 5
-        self.base_crit = 7
-
-        self.equipped_weapon = random_item_list[3]
-        self.equipped_shield = random_item_list[1]
-        self.equipped_armor = random_item_list[4]
-
 class Ranger(Hero):
     def __init__(self, ctx):
         super().__init__(ctx)
@@ -221,3 +203,21 @@ class Ranger(Hero):
         self.equipped_weapon = random_item_list[2]
         self.equipped_shield = random_item_list[5]
         self.equipped_armor = random_item_list[6]
+
+class Wizard(Hero):
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.name = ctx.author.name
+        self.type = 'Wizard'
+        self.base_hp = 10
+        self.base_mana = 10
+        self.cur_hp = self.base_hp
+        self.cur_mana = self.base_mana
+        self.base_atk = 6
+        self.base_def = 3
+        self.base_dodge = 5
+        self.base_crit = 7
+
+        self.equipped_weapon = random_item_list[3]
+        self.equipped_shield = random_item_list[1]
+        self.equipped_armor = random_item_list[4]

@@ -53,9 +53,9 @@ random_item_list = {
         'value': 1,
         'stats': {'defense': 5, 'dodge': 5}
         },
-    9: {'name': 'Kite Shield',
-        'type': 'Offhand',
-        'value': 6,
-        'stats': {'defense': 5, 'dodge': 5}
+    9: {'name': 'Short Sword',
+        'type': 'Weapon',
+        'value': 3,
+        'stats': {'attack': 4, 'dodge': 5}
         }
 }

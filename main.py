@@ -3,7 +3,6 @@ from settings import PREFIX, TOKEN
 from hero import Warrior, Wizard, Ranger
 from enemy import Enemy
 from item import random_item_list
-
 import random
 import asyncio
 
@@ -94,12 +93,12 @@ async def battle(hero, enemy):
         await battle(hero, enemy)
 
     elif str(reaction) == '🏃':
-        message = hero.flee()
+        message = hero.hero_flee()
         await hero.ctx.send(message, delete_after=5)
-        if hero.flee_attempt:
+        if hero.flee:
             await battle(hero, enemy)
         else:
-            hero.flee_attempt = False
+            hero.flee = False
             await hero_info(hero)
 
     elif str(reaction) == '🎲':

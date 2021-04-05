@@ -10,7 +10,7 @@ class Hero:
         self.next_lvl = 15
         self.gold = 0
         self.battle = False
-        self.flee_attempt = False
+        self.flee = False
 
         self.max_hp = 0
         self.max_mana = 0
@@ -54,14 +54,14 @@ class Hero:
 
         return hero_attack
 
-    def flee(self):
+    def hero_flee(self):
         if self.flee:
             message = "```You may only flee once.```"
-        elif random.randint(0, 3) == 1:
+        elif random.random() < 1/3:
             self.battle = False
             message = "```You managed to escape.```"
         else:
-            self.flee_attempt = True
+            self.flee = True
             message = "```You failed to escape.```"
 
         return message

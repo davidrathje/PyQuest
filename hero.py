@@ -3,9 +3,10 @@ from item import random_item_list
 
 
 class Hero:
-    def __init__(self, ctx, hero_type):
+    def __init__(self, ctx):
         self.ctx = ctx
-        self.type = hero_type
+        self.name = ctx.author.name
+        self.type = 'Warrior'
         self.lvl = 1
         self.xp = 0
         self.next_lvl = 15
@@ -20,55 +21,6 @@ class Hero:
         self.base_dodge = None
         self.base_crit = None
 
-        if self.type == 'Warrior':
-            self.name = ctx.author.name
-            self.base_hp = 15
-            self.base_mana = 0
-            self.base_atk = 5
-            self.base_def = 10
-            self.base_dodge = 5
-            self.base_crit = 10
-
-            self.inventory = [random.choice(random_item_list),
-                              random.choice(random_item_list)]
-
-            self.equipped_weapon = random_item_list[9]
-            self.equipped_shield = random_item_list[8]
-            self.equipped_armor = random_item_list[7]
-
-        elif self.type == 'Wizard':
-            self.name = ctx.author.name
-            self.base_hp = 10
-            self.base_mana = 10
-            self.base_atk = 6
-            self.base_def = 3
-            self.base_dodge = 5
-            self.base_crit = 7
-
-            self.inventory = [random.choice(random_item_list),
-                              random.choice(random_item_list)]
-
-            self.equipped_weapon = random_item_list[3]
-            self.equipped_shield = random_item_list[1]
-            self.equipped_armor = random_item_list[4]
-
-        elif self.type == 'Ranger':
-            self.name = ctx.author.name
-            self.base_hp = 12
-            self.base_mana = 5
-            self.base_atk = 8
-            self.base_def = 7
-            self.base_dodge = 5
-            self.base_crit = 10
-
-            self.inventory = [random.choice(random_item_list),
-                              random.choice(random_item_list)]
-
-            self.equipped_weapon = random_item_list[2]
-            self.equipped_shield = random_item_list[5]
-            self.equipped_armor = random_item_list[6]
-
-
         self.max_hp = self.base_hp
         self.cur_hp = self.max_hp
         self.max_mana = self.base_mana
@@ -78,6 +30,12 @@ class Hero:
         self.defense = self.base_def
         self.dodge = self.base_dodge
         self.critical = self.base_crit
+
+        self.inventory = []
+
+        self.equipped_weapon = {}
+        self.equipped_shield = {}
+        self.equipped_armor = {}
 
     def hero_attack(self, enemy):
         hero_damage = random.randint(0, 4 * self.lvl)
@@ -92,9 +50,10 @@ class Hero:
         elif hero_damage > 1:
             hero_attack = hero_attack['points']
 
-        if random.randint(int(self.critical * 0.2), 3) == 3:
-            hero_damage *= 2
-            hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
+        while hero_damage > 0:
+            if random.randint(int(self.critical * 0.2), 3) == 3:
+                hero_damage *= 2
+                hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
 
         enemy.cur_hp -= hero_damage
 
@@ -190,3 +149,59 @@ class Hero:
         for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
             for k, v in d.items():
                 setattr(self, k, getattr(self, k) + v)
+
+class Warrior(Hero):
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Warrior'
+        self.base_hp = 15
+        self.base_mana = 0
+        self.base_atk = 5
+        self.base_def = 10
+        self.base_dodge = 5
+        self.base_crit = 10
+
+        self.inventory = [random.choice(random_item_list),
+                          random.choice(random_item_list)]
+
+        self.equipped_weapon = random_item_list[9]
+        self.equipped_shield = random_item_list[8]
+        self.equipped_armor = random_item_list[7]
+
+
+class Ranger(Hero):
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Wizard'
+        self.base_hp = 12
+        self.base_mana = 5
+        self.base_atk = 8
+        self.base_def = 7
+        self.base_dodge = 5
+        self.base_crit = 10
+
+        self.inventory = [random.choice(random_item_list),
+                          random.choice(random_item_list)]
+
+        self.equipped_weapon = random_item_list[2]
+        self.equipped_shield = random_item_list[5]
+        self.equipped_armor = random_item_list[6]
+
+
+class Wizard(Hero):
+    def __init__(self, ctx):
+        super().__init__(ctx)
+        self.type = 'Ranger'
+        self.base_hp = 10
+        self.base_mana = 10
+        self.base_atk = 6
+        self.base_def = 3
+        self.base_dodge = 5
+        self.base_crit = 7
+
+        self.inventory = [random.choice(random_item_list),
+                          random.choice(random_item_list)]
+
+        self.equipped_weapon = random_item_list[3]
+        self.equipped_shield = random_item_list[1]
+        self.equipped_armor = random_item_list[4]

@@ -1,6 +1,6 @@
 from discord.ext import commands
 from settings import PREFIX, TOKEN
-from hero import Hero
+from hero import *
 from enemy import Enemy
 from item import random_item_list
 
@@ -38,14 +38,13 @@ async def hero_info(hero):
         await hero_info(hero)
 
     elif str(reaction) == '💰':
-        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
         await vendor(hero)
 
 
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 75:
-        enemy = Enemy(hero, 'Money')
+        enemy = Enemy(hero)
         await battle(hero, enemy)
 
     elif 75 < dice <= 100:
@@ -133,7 +132,7 @@ async def vendor(hero):
     # TODO
     elif str(reaction) == '💰':
         item = random.choice(random_item_list)
-        await hero.ctx.send(f"```You sold. {item}```", delete_after=5)
+        await hero.ctx.send(f"```You sold. {item.values('name')}```", delete_after=5)
         await vendor(hero)
 
     return reaction, user
@@ -162,7 +161,12 @@ async def game(ctx):
     reaction, user = await bot.wait_for('reaction_add', check=lambda x, y: str(x) in msg_reactions and y == ctx.author)
     await msg.delete()
 
-    hero = Hero(ctx, msg_reactions[str(reaction)])
+    if str(reaction) == '🛡️':
+        hero = Warrior(ctx)
+    elif str(reaction) == '🪄':
+        hero = Wizard(ctx)
+    else:
+        hero = Ranger(ctx)
 
     await hero_info(hero)
 

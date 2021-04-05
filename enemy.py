@@ -3,9 +3,8 @@ from item import random_item_list
 import random
 
 class Enemy(Hero):
-    def __init__(self, ctx, hero_type):
-        super().__init__(ctx, hero_type)
-
+    def __init__(self, ctx):
+        super().__init__(ctx)
         self.name = random.choice(['a giant rat', 'a small coyote', 'a basilisk'])
         self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
         self.xp = random.randint(2 * self.lvl, 5 * self.lvl)

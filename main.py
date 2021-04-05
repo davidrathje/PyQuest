@@ -8,6 +8,39 @@ import asyncio
 bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
 
+async def hero_info(hero):
+    weapon, shield, armor = hero.get_equipped_items()
+    hero.equip_gear()
+    if hero.battle:
+        hero.battle = False
+        amount = hero.heal(hero.lvl * 5)
+        await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
+
+    msg = f"```[ {hero.name.upper()} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
+          f"Health: {hero.hp: >4}{'Mana:': >10} {hero.mana: >7}\n"                                          \
+          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
+          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
+          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
+          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                                                      \
+          f"[ INVENTORY ]\n{hero.get_inventory()}\n\n"                                                      \
+          f"Please choose your action.```"
+
+    msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
+    reaction, user = await show_msg(hero, msg, msg_reactions)
+
+    if str(reaction) == '🗺️':
+        await adventure(hero)
+
+
+    elif str(reaction) == '🔨':
+        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
+        await hero_info(hero)
+
+    elif str(reaction) == '💰':
+        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
+        await vendor(hero)
+
+
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 90:
@@ -75,45 +108,8 @@ async def battle(hero, enemy):
             await game(hero.ctx)
 
 
-async def hero_info(hero):
-    weapon, shield, armor = hero.get_equipped_items()
-    hero.equip_gear()
-    if hero.battle:
-        hero.battle = False
-        amount = hero.heal(hero.lvl * 5)
-        await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
-
-    msg = f"```[ {hero.name.upper()} ]\nLvl {hero.lvl} {hero.type}\n\n"                                     \
-          f"Health: {hero.hp: >4}{'Mana:': >10} {hero.mana: >7}\n"                                          \
-          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"                                  \
-          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
-          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
-          f"[ GEAR ]\n"                                                                                     \
-          f"{weapon}\n"                                                                                     \
-          f"{shield}\n"                                                                                     \
-          f"{armor}\n\n"                                                                                    \
-          f"[ INVENTORY ]\n"                                                                                \
-          f"{hero.get_inventory()}\n\n"                                                                     \
-          f"Please choose your action.```"
-
-    msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
-    reaction, user = await show_msg(hero, msg, msg_reactions)
-
-    if str(reaction) == '🗺️':
-        await adventure(hero)
-
-
-    elif str(reaction) == '🔨':
-        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
-        await hero_info(hero)
-
-    elif str(reaction) == '💰':
-        await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
-        await vendor(hero)
-
-
 async def vendor(hero):
-    msg = f"[ VENDOR ]\nHere you can sell your items."
+    msg = f"```[ VENDOR ]\nHere you can sell your items.```"
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
     reaction, user = await show_msg(hero, msg, msg_reactions)
     return reaction, user

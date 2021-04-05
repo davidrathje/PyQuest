@@ -22,7 +22,7 @@ class Hero:
         self.dodge = 5
         self.critical = 5
         self.gold = 0
-        self.inventory = []
+        self.inventory = {}
         self.battle = False
         self.flee = False
         self.equipped_weapon = None
@@ -80,17 +80,24 @@ class Hero:
         if len(self.inventory) >= 3:
             message = "```Your inventory is full.```"
         else:
-            item = Item('Rusty Sword', 'Weapon', 'Attack_Type')
-            self.inventory.append(item.name)
+            item = Item('Rusty Sword', 'Weapon', 1, {'attack': 1, 'critical': 2, 'dodge': 1})
+            self.inventory.pop(item)
             message = f"```You found {item.name}.```"
         return message
 
     def get_inventory(self):
-        inventory = '\n'.join(self.inventory)
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': '🤸‍♂'}
+        inventory = ""
+        for item in self.inventory:
+            inventory += f"{item['name']: <16}"
+            for k, v in item['stats'].items():
+                inventory += stats[k] + str(v)
+            inventory += "\n"
+
         return inventory
 
     def get_equipped_items(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': '🤸‍♂'}
         weapon = f"{self.equipped_weapon['name']: <16}"
         for k, v in self.equipped_weapon['stats'].items():
             weapon += stats[k] + str(v)
@@ -135,20 +142,32 @@ class Warrior(Hero):
         self.dodge = 5
         self.critical = 10
 
-        self.inventory = []
+        self.inventory = [{'name': 'Short Bow',
+                           'type': 'Weapon',
+                           'value': 2,
+                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
+                           },
+                          {'name': 'Lantern',
+                           'type': 'Offhand',
+                           'value': 0,
+                           'stats': {'defense': 1, 'dodge': 1}
+                           }]
 
         self.equipped_weapon = {'name': 'Rusty Longsword',
                                 'type': 'Weapon',
+                                'value': 0,
                                 'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
                                 }
 
         self.equipped_shield = {'name': 'Kite Shield',
                                 'type': 'Offhand',
+                                'value': 0,
                                 'stats': {'defense': 5, 'dodge': 5}
                                 }
 
         self.equipped_armor = {'name': 'Plate Armor',
                                'type': 'Armor',
+                               'value': 0,
                                'stats': {'defense': 5, 'dodge': 5}
                                }
 
@@ -164,20 +183,32 @@ class Wizard(Hero):
         self.dodge = 5
         self.critical = 5
 
-        self.inventory = ['Bronze Longsword', 'Mana Potion']
+        self.inventory = [{'name': 'Short Bow',
+                           'type': 'Weapon',
+                           'value': 2,
+                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
+                           },
+                          {'name': 'Lantern',
+                           'type': 'Offhand',
+                           'value': 0,
+                           'stats': {'defense': 1, 'dodge': 1}
+                           }]
 
         self.equipped_weapon = {'name': 'Wand',
                                 'type': 'Weapon',
+                                'value': 0,
                                 'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
                                 }
 
         self.equipped_shield = {'name': 'Lantern',
                                 'type': 'Offhand',
+                                'value': 0,
                                 'stats': {'defense': 1, 'dodge': 1}
                                 }
 
         self.equipped_armor = {'name': 'Cloth Robe',
                                'type': 'Armor',
+                               'value': 0,
                                'stats': {'attack': 4, 'defense': 3, 'dodge': 2}
                                }
 
@@ -193,19 +224,31 @@ class Ranger(Hero):
         self.dodge = 5
         self.critical = 5
 
-        self.inventory = ['Bronze Longsword', 'Healing Potion']
+        self.inventory = [{'name': 'Short Bow',
+                           'type': 'Weapon',
+                           'value': 2,
+                           'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
+                           },
+                          {'name': 'Lantern',
+                           'type': 'Offhand',
+                           'value': 0,
+                           'stats': {'defense': 1, 'dodge': 1}
+                           }]
 
         self.equipped_weapon = {'name': 'Short Bow',
                                 'type': 'Weapon',
+                                'value': 0,
                                 'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
                                 }
 
         self.equipped_shield = {'name': 'Quiver',
                                 'type': 'Offhand',
+                                'value': 0,
                                 'stats': {'critical': 3, 'dodge': 1}
                                 }
 
         self.equipped_armor = {'name': 'Leather Armor',
                                'type': 'Armor',
+                               'value': 0,
                                'stats': {'defense': 5, 'dodge': 5}
                                }

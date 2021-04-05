@@ -23,7 +23,6 @@ class Hero:
         self.base_dodge = 0
         self.base_crit = 0
 
-
         self.attack = 0
         self.defense = 0
         self.dodge = 0
@@ -95,7 +94,7 @@ class Hero:
         else:
             item = random.choice(random_item_list)
             self.inventory.append(item)
-            message = f"```You found something.```"
+            message = f"```You found {item['name']}```"
         return message
 
     def sell_item(self, item):
@@ -162,9 +161,6 @@ class Warrior(Hero):
         self.base_dodge = 5
         self.base_crit = 10
 
-        self.inventory = [random.choice(random_item_list),
-                          random.choice(random_item_list)]
-
         self.equipped_weapon = random_item_list[9]
         self.equipped_shield = random_item_list[8]
         self.equipped_armor = random_item_list[7]
@@ -183,9 +179,6 @@ class Wizard(Hero):
         self.base_dodge = 5
         self.base_crit = 7
 
-        self.inventory = [random.choice(random_item_list),
-                          random.choice(random_item_list)]
-
         self.equipped_weapon = random_item_list[3]
         self.equipped_shield = random_item_list[1]
         self.equipped_armor = random_item_list[4]
@@ -203,9 +196,6 @@ class Ranger(Hero):
         self.base_def = 7
         self.base_dodge = 5
         self.base_crit = 10
-
-        self.inventory = [random.choice(random_item_list),
-                          random.choice(random_item_list)]
 
         self.equipped_weapon = random_item_list[2]
         self.equipped_shield = random_item_list[5]

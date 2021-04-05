@@ -21,7 +21,7 @@ async def hero_info(hero):
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"                           \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"                            \
           f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                                                      \
-          f"[ INVENTORY ]\n{hero.get_inventory()}\n\n"                                                      \
+          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n"                                                      \
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
@@ -107,11 +107,23 @@ async def battle(hero, enemy):
 
 
 async def vendor(hero):
-    msg = f"```[ VENDOR ]\nHere you can sell your items.```"
+    inventory = hero.get_inventory_items()
+    msg = f"```[ VENDOR ]\nWhat would you like to sell?.\n\n" \
+          f"[ INVENTORY ]\n{inventory}\n\n```"
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
     reaction, user = await show_msg(hero, msg, msg_reactions)
-    return reaction, user
 
+    if str(reaction) == '🗺️':
+        await hero_info(hero)
+
+    if str(reaction) == '💰':
+        for item in inventory:
+            print(item)
+
+        await hero.ctx.send(f"```You sold.```", delete_after=5)
+        await vendor(hero)
+
+    return reaction, user
 
 async def show_msg(hero, msg, msg_reactions):
     msg = await hero.ctx.send(msg)

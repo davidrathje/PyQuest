@@ -13,7 +13,7 @@ class Hero:
         self.battle = False
         self.flee = False
 
-        self.base_hp = 0
+        self.base_hp = None
         self.base_mana = 0
         self.base_atk = 5
         self.base_def = 10
@@ -64,24 +64,6 @@ class Hero:
             self.equipped_shield = item_list[5]
             self.equipped_armor = item_list[6]
 
-        elif self.type == 'Enemy':
-            self.name = random.choice(['a giant rat', 'a small coyote', 'a basilisk'])
-            self.base_hp = 12
-            self.base_mana = 5
-            self.base_atk = 8
-            self.base_def = 7
-            self.base_dodge = 5
-            self.base_crit = 10
-
-            self.inventory = [random.choice(item_list)]
-
-            self.equipped_weapon = item_list[2]
-            self.equipped_shield = item_list[5]
-            self.equipped_armor = item_list[6]
-
-            self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
-            self.xp = random.randint(2 * self.lvl, 5 * self.lvl)
-            self.gold = random.randint(1, 3 * self.lvl)
 
         self.max_hp = self.base_hp
         self.cur_hp = self.max_hp
@@ -152,7 +134,14 @@ class Hero:
             message = f"```You found {item.name}.```"
         return message
 
-    def get_inventory(self):
+    def sell_item(self, item):
+        if self.gold > item.value:
+            return item
+
+
+
+
+    def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂'}
         inventory = ""
         for item in self.inventory:

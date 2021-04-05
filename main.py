@@ -7,7 +7,6 @@ import asyncio
 
 bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
-
 async def hero_info(hero):
     weapon, shield, armor = hero.get_equipped_items()
     hero.set_equipped_stats()
@@ -31,7 +30,6 @@ async def hero_info(hero):
     if str(reaction) == '🗺️':
         await adventure(hero)
 
-
     elif str(reaction) == '🔨':
         await hero.ctx.send('```Feature not ready yet.```', delete_after=5)
         await hero_info(hero)
@@ -44,7 +42,7 @@ async def hero_info(hero):
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 75:
-        enemy = Enemy(hero, 'Monster')
+        enemy = Enemy(hero, 'Enemy')
         await battle(hero, enemy)
 
     elif 75 < dice <= 100:
@@ -65,7 +63,7 @@ async def battle(hero, enemy):
     reaction, user = await show_msg(hero, msg, msg_reactions)
 
     if str(reaction) == '🗡️':
-        hero_attack = Hero.attack(hero, enemy)
+        hero_attack = Hero.hero_attack(hero, enemy)
         if Enemy.enemy_died(enemy, hero):
             xp, gold = Enemy.enemy_died(enemy, hero)
             await hero.ctx.send(f"```{hero_attack}\n"
@@ -147,6 +145,5 @@ async def game(ctx):
 @bot.event
 async def on_ready():
     print("Logged in as", bot.user)
-
 
 bot.run(TOKEN)

@@ -64,17 +64,36 @@ class Hero:
             self.equipped_shield = item_list[5]
             self.equipped_armor = item_list[6]
 
+        elif self.type == 'Enemy':
+            self.name = random.choice(['a giant rat', 'a small coyote', 'a basilisk'])
+            self.base_hp = 12
+            self.base_mana = 5
+            self.base_atk = 8
+            self.base_def = 7
+            self.base_dodge = 5
+            self.base_crit = 10
+
+            self.inventory = [random.choice(item_list)]
+
+            self.equipped_weapon = item_list[2]
+            self.equipped_shield = item_list[5]
+            self.equipped_armor = item_list[6]
+
+            self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
+            self.xp = random.randint(2 * self.lvl, 5 * self.lvl)
+            self.gold = random.randint(1, 3 * self.lvl)
+
         self.max_hp = self.base_hp
         self.cur_hp = self.max_hp
         self.max_mana = self.base_mana
         self.cur_mana = self.max_mana
+
         self.attack = self.base_atk
         self.defense = self.base_def
         self.dodge = self.base_dodge
         self.critical = self.base_crit
 
-
-    def attack(self, enemy):
+    def hero_attack(self, enemy):
         hero_damage = random.randint(0, 4 * self.lvl)
         hero_attack = {'miss': f"You miss {enemy.name}.",
                        'point': f"You attack {enemy.name} for {hero_damage} point of damage.",
@@ -170,4 +189,4 @@ class Hero:
 
         for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
             for k, v in d.items():
-                setattr(self, k, getattr(self, k)+v)
+                setattr(self, k, getattr(self, k) + v)

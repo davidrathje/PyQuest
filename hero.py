@@ -7,7 +7,7 @@ class Hero:
         self.xp = 0
         self.lvl = 1
         self.next_lvl = 8
-        self.gold = 100
+        self.gold = 10
         self.battle = False
         self.flee = False
 
@@ -27,7 +27,7 @@ class Hero:
         self.dodge = 0
         self.critical = 0
 
-        self.inventory = [random_item_list[0], random_item_list[2]]
+        self.inventory = [random.choice(random_item_list)]
 
         self.equipped_weapon = {}
         self.equipped_shield = {}

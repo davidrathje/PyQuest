@@ -154,7 +154,7 @@ class Hero:
                     if self.cur_mana > self.max_mana:
                         self.cur_mana = self.max_mana
 
-                return f"```You regained {d['stats']['health']} points of health.```"
+                return f"```You regained {d['stats']['mana']} points of mana.```"
 
 
 

@@ -128,7 +128,7 @@ class Hero:
             self.equipped_armor = item
 
         elif item['type'] == 'Consumable':
-            message = self.use_potion(item)
+            return "```You can't equip a potion. Try using them in a fight.```"
 
         for i, d in enumerate(self.inventory):
             if d == item:
@@ -146,7 +146,7 @@ class Hero:
                     if self.cur_hp > self.max_hp:
                         self.cur_hp = self.max_hp
 
-                    return f"```You regained {d['stats']['health']} points of health.```"
+                return f"```You regained {d['stats']['health']} points of health.```"
 
             elif _type == 'mana':
                 if d['name'] == 'Mana Potion':
@@ -154,7 +154,8 @@ class Hero:
                     if self.cur_mana > self.max_mana:
                         self.cur_mana = self.max_mana
 
-                    return f"```You regained {d['stats']['health']} points of health.```"
+                return f"```You regained {d['stats']['health']} points of health.```"
+
 
 
     def set_item_reactions(self, msg_reactions):
@@ -266,5 +267,5 @@ class Wizard(Hero):
         self.base_crit = 7
 
         self.equipped_weapon = random_item_list[3]
-        self.equipped_shield = random_item_list[1]
+        self.equipped_shield = random_item_list[10]
         self.equipped_armor = random_item_list[4]

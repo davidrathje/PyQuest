@@ -56,13 +56,14 @@ async def hero_info(hero):
     elif str(reaction) == '🥇':
         message = hero.equip_item(hero.inventory[0])
         await hero.ctx.send(message, delete_after=5)
+
     elif str(reaction) == '🥈':
         message = hero.equip_item(hero.inventory[1])
         await hero.ctx.send(message, delete_after=5)
+
     elif str(reaction) == '🥉':
         message = hero.equip_item(hero.inventory[2])
         await hero.ctx.send(message, delete_after=5)
-
 
     await hero_info(hero)
 

@@ -13,10 +13,10 @@ random_item_list = {
         'stats': {'health': 10}
         },
 
-    1: {'name': 'Lantern',
-        'type': 'Offhand',
-        'value': 2,
-        'stats': {'defense': 1, 'dodge': 1}
+    1: {'name': 'Mana Potion',
+        'type': 'Consumable',
+        'value': 5,
+        'stats': {'mana': 10}
         },
 
     2: {'name': 'Short Bow',
@@ -66,5 +66,10 @@ random_item_list = {
         'type': 'Weapon',
         'value': 3,
         'stats': {'attack': 4, 'dodge': 5}
-        }
+        },
+    10: {'name': 'Lantern',
+         'type': 'Offhand',
+         'value': 2,
+         'stats': {'defense': 1, 'dodge': 1}
+         }
 }

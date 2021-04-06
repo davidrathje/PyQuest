@@ -156,8 +156,6 @@ class Hero:
 
                 return f"```You regained {d['stats']['mana']} points of mana.```"
 
-
-
     def set_item_reactions(self, msg_reactions):
         item_reactions = {0: '🥇', 1: '🥈', 2: '🥉', 3: '🏅'}
         for i, item in enumerate(self.inventory):

@@ -8,6 +8,18 @@ import asyncio
 
 bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
+async def adventure(hero):
+    dice = random.randint(0, 100)
+    if dice <= 90:
+        enemy = Enemy(hero)
+        await battle(hero, enemy)
+
+    elif 90 < dice <= 100:
+        message = hero.get_item()
+        await hero.ctx.send(message, delete_after=5)
+        await hero_info(hero)
+
+
 async def hero_info(hero):
     weapon, shield, armor = hero.get_equipped_items()
     hero.set_equipped_stats()
@@ -33,24 +45,11 @@ async def hero_info(hero):
         await adventure(hero)
 
     elif str(reaction) == '🔨':
-        message = hero.buy_item(random_item_list[0])
-        await hero.ctx.send(message, delete_after=5)
+        await hero.ctx.send(f"```You repaired all broken items. (Not finished)```")
         await hero_info(hero)
 
     elif str(reaction) == '💰':
         await vendor(hero)
-
-
-async def adventure(hero):
-    dice = random.randint(0, 100)
-    if dice <= 90:
-        enemy = Enemy(hero)
-        await battle(hero, enemy)
-
-    elif 90 < dice <= 100:
-        message = hero.get_item()
-        await hero.ctx.send(message, delete_after=5)
-        await hero_info(hero)
 
 
 async def battle(hero, enemy):
@@ -124,7 +123,8 @@ async def vendor(hero):
 
     # TODO
     elif str(reaction) == '🔨':
-        await hero.ctx.send(f"```You repaired all broken items.```")
+        message = hero.buy_item(random_item_list[0])
+        await hero.ctx.send(message, delete_after=5)
         await hero_info(hero)
 
     # TODO
@@ -152,7 +152,7 @@ async def show_msg(hero, msg, msg_reactions):
 @bot.command(aliases=['g'])
 async def game(ctx):
     msg = await ctx.send("```[ PyQuest ]\nWelcome to PyQuest\n\nPlease choose your hero.```")
-    msg_reactions = {'🛡️': 'Warrior', '🏹': 'Ranger', '🪄': 'Wizard'}
+    msg_reactions = {'🛡️': 'Warrior', '🏹': 'Ranger', '🧙‍♂️': 'Wizard'}
     for reaction in msg_reactions:
         await msg.add_reaction(reaction)
 

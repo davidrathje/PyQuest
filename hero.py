@@ -97,6 +97,7 @@ class Hero:
             message = f"```You found a {item['name']}.```"
         return message
 
+    # TODO
     def sell_item(self):
         for i, d in enumerate(self.inventory):
             del self.inventory[i]
@@ -203,6 +204,7 @@ class Ranger(Hero):
         self.equipped_weapon = random_item_list[2]
         self.equipped_shield = random_item_list[5]
         self.equipped_armor = random_item_list[6]
+
 
 class Wizard(Hero):
     def __init__(self, ctx):

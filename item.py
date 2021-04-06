@@ -9,12 +9,12 @@ class Item:
 random_item_list = {
     0: {'name': 'Health Potion',
         'type': 'Consumable',
-        'value': 2,
+        'value': 5,
         'stats': {'health': 10}
         },
     1: {'name': 'Lantern',
         'type': 'Offhand',
-        'value': 0,
+        'value': 2,
         'stats': {'defense': 1, 'dodge': 1}
         },
     2: {'name': 'Short Bow',
@@ -24,7 +24,7 @@ random_item_list = {
         },
     3: {'name': 'Wand',
         'type': 'Weapon',
-        'value': 4,
+        'value': 3,
         'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
         },
     4: {'name': 'Cloth Robe',

@@ -74,12 +74,12 @@ async def battle(hero, enemy):
             if hero.get_level():
                 await hero.ctx.send(f"```You gained a level.```", delete_after=5)
 
-            if random.randint(0, 100) > 0:
+            if random.randint(0, 100) > 90:
                 message = hero.get_item()
                 await hero.ctx.send(message, delete_after=5)
 
             await hero_info(hero)
-
+            return
         else:
             enemy_attack = Enemy.enemy_attack(enemy, hero)
 
@@ -119,7 +119,7 @@ async def vendor(hero):
           f"{'❤️': <5}Buy Health Potion\n{'💰️': <5}Sell items\n\n" \
           f"What would you like to do?\n\n" \
           f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
-    msg_reactions = {'🗺️': 'adventure', '❤️': 'buy', '💰': 'sell'}
+    msg_reactions = hero.set_item_reactions()
     reaction, user = await show_msg(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
@@ -132,10 +132,21 @@ async def vendor(hero):
         await vendor(hero)
 
     # TODO
-    elif str(reaction) == '💰':
-        message = hero.sell_item()
+    elif str(reaction) == '💶':
+        message = hero.sell_item(0)
         await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
+
+    elif str(reaction) == '💷':
+        message = hero.sell_item(1)
+        await hero.ctx.send(message, delete_after=5)
+        await vendor(hero)
+
+    elif str(reaction) == '💵':
+        message = hero.sell_item(2)
+        await hero.ctx.send(message, delete_after=5)
+        await vendor(hero)
+
 
     return reaction, user
 

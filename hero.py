@@ -100,10 +100,11 @@ class Hero:
         return message
 
     # TODO
-    def sell_item(self):
+    def sell_item(self, item):
         for i, d in enumerate(self.inventory):
-            del self.inventory[i]
-            self.gold += d['value']
+            if i == item:
+                del self.inventory[i]
+                self.gold += d['value']
 
             return f"```You sold {d['name']} for {d['value']} gold.```"
         return f"```Your inventory is empty.```"
@@ -129,6 +130,13 @@ class Hero:
     # TODO
     def equip_item(self):
         pass
+
+    def set_item_reactions(self):
+        msg_reactions = {'🗺️': 'adventure'}
+        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
+        for i, item in enumerate(self.inventory):
+            msg_reactions[item_reactions[i]] = item
+        return msg_reactions
 
     def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}

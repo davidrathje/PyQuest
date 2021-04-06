@@ -8,7 +8,7 @@ class Hero:
         self.lvl = 1
         self.xp = 0
         self.next_lvl = 15
-        self.gold = 10
+        self.gold = 0
         self.battle = False
         self.flee = False
 

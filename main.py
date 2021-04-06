@@ -92,6 +92,7 @@ async def battle(hero, enemy):
 
         await battle(hero, enemy)
 
+
     elif str(reaction) == '🏃':
         message = hero.hero_flee()
         await hero.ctx.send(message, delete_after=5)
@@ -100,6 +101,7 @@ async def battle(hero, enemy):
         else:
             hero.flee = False
             await hero_info(hero)
+
 
     elif str(reaction) == '🎲':
         if random.randint(0, 1) == 0:
@@ -134,6 +136,7 @@ async def vendor(hero):
         await vendor(hero)
 
     return reaction, user
+
 
 async def show_msg(hero, msg, msg_reactions):
     msg = await hero.ctx.send(msg)

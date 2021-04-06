@@ -115,7 +115,9 @@ async def battle(hero, enemy):
 
 
 async def vendor(hero):
-    msg = f"```[ VENDOR ]\nWhat would you like to sell?.\n\n" \
+    msg = f"```[ VENDOR ]\nHere you can buy or sell items/potions.\n\n" \
+          f"{'❤️': <5}Buy Health Potion\n{'💰️': <5}Sell items\n\n" \
+          f"What would you like to do?\n\n" \
           f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
     msg_reactions = {'🗺️': 'adventure', '❤️': 'buy', '💰': 'sell'}
     reaction, user = await show_msg(hero, msg, msg_reactions)

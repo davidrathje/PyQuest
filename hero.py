@@ -56,7 +56,7 @@ class Hero:
     def hero_flee(self):
         if self.flee:
             message = "```You may only flee once.```"
-        elif random.random() < 1:
+        elif random.random() < 1/3:
             self.battle = False
             message = "```You managed to escape.```"
         else:

@@ -122,6 +122,10 @@ async def battle(hero, enemy):
         await hero.ctx.send(message, delete_after=5)
         await battle(hero, enemy)
 
+    elif str(reaction) == '⚗️':
+        message = hero.use_potion('mana')
+        await hero.ctx.send(message, delete_after=5)
+        await battle(hero, enemy)
 
     elif str(reaction) == '🏃':
         message = hero.hero_flee()

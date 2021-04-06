@@ -90,6 +90,13 @@ class Hero:
 
             return True
 
+    def set_item_reactions(self):
+        msg_reactions = {'🗺️': 'adventure', '❤️': 'buy_item'}
+        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
+        for i, item in enumerate(self.inventory):
+            msg_reactions[item_reactions[i]] = 'sell_item'
+        return msg_reactions, item_reactions
+
     def get_item(self):
         if len(self.inventory) > 3:
             message = "```Your inventory is full.```"
@@ -99,19 +106,16 @@ class Hero:
             message = f"```You found a {item['name']}.```"
         return message
 
-    # TODO
     def sell_item(self, item):
         for i, d in enumerate(self.inventory):
             if i == item:
-                del self.inventory[i]
+                del self.inventory[item]
                 self.gold += d['value']
 
-            return f"```You sold {d['name']} for {d['value']} gold.```"
-        return f"```Your inventory is empty.```"
+                return f"```You sold {d['name']} for {d['value']} gold.```"
 
-    # TODO
     def buy_item(self, item):
-        if self.gold > item['value']:
+        if self.gold >= item['value']:
             if len(self.inventory) < 4:
                 self.inventory.append(item)
                 self.gold -= item['value']
@@ -119,7 +123,7 @@ class Hero:
                 return f"```Your inventory is full.```"
 
             return f"```You bought {item['name']} for {item['value']} gold.```"
-        return f"```You can't afford that item.```"
+        return f"```You can't afford {item['name']}.```"
 
     # TODO
     def use_item(self, item):
@@ -130,13 +134,6 @@ class Hero:
     # TODO
     def equip_item(self):
         pass
-
-    def set_item_reactions(self):
-        msg_reactions = {'🗺️': 'adventure'}
-        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
-        for i, item in enumerate(self.inventory):
-            msg_reactions[item_reactions[i]] = item
-        return msg_reactions
 
     def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}

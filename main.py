@@ -22,8 +22,11 @@ async def adventure(hero):
 
 async def hero_info(hero):
     weapon, shield, armor = hero.get_equipped_items()
+
     hero.set_equipped_stats()
+
     inventory = hero.get_inventory_items()
+
     if hero.battle:
         hero.battle = False
         amount = hero.heal(hero.lvl * 5)
@@ -115,38 +118,29 @@ async def battle(hero, enemy):
 
 
 async def vendor(hero):
-    msg = f"```[ VENDOR ]\nHere you can buy or sell items/potions.\n\n" \
-          f"{'❤️': <5}Buy Health Potion\n{'💰️': <5}Sell items\n\n" \
+    msg_reactions, item_reactions = hero.set_item_reactions()
+    msg = f"```[ VENDOR ]\nBuy or sell items.\n\n" \
+          f"❤️ Buy Health Potion\n💶 Sell items\n\n" \
           f"What would you like to do?\n\n" \
           f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
-    msg_reactions = hero.set_item_reactions()
+
     reaction, user = await show_msg(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
         await hero_info(hero)
 
-    # TODO
-    elif str(reaction) == '❤️':
+    if str(reaction) == '❤️':
         message = hero.buy_item(random_item_list[0])
         await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
 
-    # TODO
-    elif str(reaction) == '💶':
-        message = hero.sell_item(0)
-        await hero.ctx.send(message, delete_after=5)
-        await vendor(hero)
+    for i, k in enumerate(item_reactions.values()):
+        if str(reaction) == k:
+            message = hero.sell_item(i)
 
-    elif str(reaction) == '💷':
-        message = hero.sell_item(1)
-        await hero.ctx.send(message, delete_after=5)
-        await vendor(hero)
+            await hero.ctx.send(message, delete_after=5)
 
-    elif str(reaction) == '💵':
-        message = hero.sell_item(2)
-        await hero.ctx.send(message, delete_after=5)
-        await vendor(hero)
-
+            await vendor(hero)
 
     return reaction, user
 

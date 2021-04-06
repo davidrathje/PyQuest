@@ -6,7 +6,7 @@ class Hero:
         self.ctx = ctx
         self.xp = 0
         self.lvl = 1
-        self.next_lvl = 8
+        self.next_lvl = 12
         self.gold = 10
         self.battle = False
         self.flee = False
@@ -27,7 +27,7 @@ class Hero:
         self.dodge = 0
         self.critical = 0
 
-        self.inventory = [random.choice(random_item_list)]
+        self.inventory = [random.choice(random_item_list), random_item_list[1]]
 
         self.equipped_weapon = {}
         self.equipped_shield = {}
@@ -174,10 +174,10 @@ class Hero:
         return msg_reactions, vendor_reactions
 
     def get_inventory_items(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️', 'mana': ' ⚗️'}
         inventory = ""
         for i, item in enumerate(self.inventory):
-            inventory += f"{i+1}. {item['name']: <16}"
+            inventory += f"{i+1}. {item['name']: <13}"
             for k, v in item['stats'].items():
                 inventory += stats[k] + str(v)
             inventory += "\n"

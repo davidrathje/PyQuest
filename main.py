@@ -72,13 +72,18 @@ async def battle(hero, enemy):
     msg = f"```css\n[ BATTLE ]\n" \
           f"{hero.name: <12}{'vs': <7}{enemy.name}\n" \
           f"Lvl {hero.lvl: <15}Lvl {enemy.lvl}\n" \
-          f"HP {hero.cur_hp}/{hero.max_hp}{'HP ': >14}{enemy.cur_hp}/{enemy.max_hp}\n\n" \
+          f"HP {hero.cur_hp}/{hero.max_hp}{'HP ': >14}{enemy.cur_hp}/{enemy.max_hp}\n" \
+          f"Mana {hero.cur_mana}/{hero.max_mana}{'Mana ': >16}{enemy.cur_hp}/{enemy.max_hp}\n\n" \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack'}
     for value in hero.inventory:
         if value['name'] == 'Health Potion':
             msg_reactions['❤️'] = 'Health Potion'
+
+        elif value['name'] == 'Mana Potion':
+            msg_reactions['⚗️'] = 'Mana Potion'
+
     msg_reactions['🏃'] = 'flee'
     msg_reactions['🎲'] = 'dice'
 

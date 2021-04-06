@@ -117,17 +117,17 @@ async def battle(hero, enemy):
 async def vendor(hero):
     msg = f"```[ VENDOR ]\nWhat would you like to sell?.\n\n" \
           f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
-    msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
+    msg_reactions = {'🗺️': 'adventure', '❤️': 'buy', '💰': 'sell'}
     reaction, user = await show_msg(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
         await hero_info(hero)
 
     # TODO
-    elif str(reaction) == '🔨':
+    elif str(reaction) == '❤️':
         message = hero.buy_item(random_item_list[0])
         await hero.ctx.send(message, delete_after=5)
-        await hero_info(hero)
+        await vendor(hero)
 
     # TODO
     elif str(reaction) == '💰':

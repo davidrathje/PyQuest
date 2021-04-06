@@ -1,7 +1,6 @@
 import random
 from item import random_item_list
 
-
 class Hero:
     def __init__(self, ctx):
         self.ctx = ctx
@@ -86,6 +85,9 @@ class Hero:
             self.base_dodge += int(self.base_dodge * 0.2)
             self.base_crit += int(self.base_crit * 0.2)
 
+            self.cur_hp = self.max_hp
+            self.cur_mana = self.max_mana
+
             return True
 
     def get_item(self):
@@ -125,11 +127,11 @@ class Hero:
             return item
 
     # TODO
-    def repair_item(self):
+    def equip_item(self):
         pass
 
     def get_inventory_items(self):
-        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤'}
+        stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}
         inventory = ""
         for item in self.inventory:
             inventory += f"{item['name']: <16}"

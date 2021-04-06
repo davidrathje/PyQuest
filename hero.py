@@ -6,7 +6,7 @@ class Hero:
         self.ctx = ctx
         self.lvl = 1
         self.xp = 0
-        self.next_lvl = 15
+        self.next_lvl = 8
         self.gold = 0
         self.battle = False
         self.flee = False
@@ -90,13 +90,6 @@ class Hero:
 
             return True
 
-    def set_item_reactions(self):
-        msg_reactions = {'🗺️': 'adventure', '❤️': 'buy_item'}
-        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
-        for i, item in enumerate(self.inventory):
-            msg_reactions[item_reactions[i]] = 'sell_item'
-        return msg_reactions, item_reactions
-
     def get_item(self):
         if len(self.inventory) > 3:
             message = "```Your inventory is full.```"
@@ -134,6 +127,13 @@ class Hero:
     # TODO
     def equip_item(self):
         pass
+
+    def set_item_reactions(self):
+        msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion'}
+        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
+        for i, item in enumerate(self.inventory):
+            msg_reactions[item_reactions[i]] = f"Sell {item['name']}"
+        return msg_reactions, item_reactions
 
     def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}

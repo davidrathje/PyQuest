@@ -8,6 +8,7 @@ import asyncio
 
 bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
+
 async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 90:
@@ -32,23 +33,23 @@ async def hero_info(hero):
         amount = hero.heal(hero.lvl * 5)
         await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
 
-    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n"                     \
-          f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n"          \
-          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n"          \
-          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n"   \
-          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n"    \
-          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n"                              \
-          f"[ INVENTORY ]\n{inventory}\n\n"                                         \
+    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n" \
+          f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n" \
+          f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n" \
+          f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n" \
+          f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n" \
+          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n" \
+          f"[ INVENTORY ]\n{inventory}\n\n" \
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
-    reaction, user = await show_msg(hero, msg, msg_reactions)
+    reaction, user = await get_reaction(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
         await adventure(hero)
 
     elif str(reaction) == '🔨':
-        await hero.ctx.send(f"```You repaired all broken items. (Not finished)```")
+        await hero.ctx.send(f"```You repaired all broken items. (Not finished)```", delete_after=5)
         await hero_info(hero)
 
     elif str(reaction) == '💰':
@@ -57,14 +58,14 @@ async def hero_info(hero):
 
 async def battle(hero, enemy):
     hero.battle = True
-    msg = f"```[ BATTLE ]\n"                                                            \
-          f"{hero.name}\tvs\t{enemy.name}\n"                                            \
-          f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n"                                      \
-          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n"    \
+    msg = f"```[ BATTLE ]\n" \
+          f"{hero.name}\tvs\t{enemy.name}\n" \
+          f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n" \
+          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n" \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack', '🏃': 'flee', '🎲': 'dice'}
-    reaction, user = await show_msg(hero, msg, msg_reactions)
+    reaction, user = await get_reaction(hero, msg, msg_reactions)
 
     if str(reaction) == '🗡️':
         hero_attack = hero.hero_attack(enemy)
@@ -107,7 +108,7 @@ async def battle(hero, enemy):
 
 
     elif str(reaction) == '🎲':
-        if random.randint(0, 1) == 0:
+        if random.random() < 1 / 2:
             hero.heal(hero.max_hp)
             await hero.ctx.send(f"```You have been restored by the gods.```", delete_after=6)
             await battle(hero, enemy)
@@ -119,21 +120,25 @@ async def battle(hero, enemy):
 
 async def vendor(hero):
     msg_reactions, item_reactions = hero.set_item_reactions()
-    msg = f"```[ VENDOR ]\nBuy or sell items.\n\n" \
-          f"❤️ Buy Health Potion\n💶 Sell items\n\n" \
-          f"What would you like to do?\n\n" \
-          f"[ INVENTORY ]\n{hero.get_inventory_items()}\n\n```"
+    msg = f"```[ VENDOR ]\nBuy or sell items.\n\n"
+    for key, val in msg_reactions.items():
+        msg += f"{key} {val} \n"
 
-    reaction, user = await show_msg(hero, msg, msg_reactions)
+    msg += f"\n[ INVENTORY ]\n{hero.get_inventory_items()}\n" \
+           f"What would you like to do?\n\n```"
+
+    reaction, user = await get_reaction(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
         await hero_info(hero)
 
+    # TODO
     if str(reaction) == '❤️':
         message = hero.buy_item(random_item_list[0])
         await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
 
+    # GET OUR REACTIONS FOR ITEMS.
     for i, k in enumerate(item_reactions.values()):
         if str(reaction) == k:
             message = hero.sell_item(i)
@@ -145,15 +150,15 @@ async def vendor(hero):
     return reaction, user
 
 
-async def show_msg(hero, msg, msg_reactions):
+async def get_reaction(hero, msg, msg_reactions):
     msg = await hero.ctx.send(msg)
     for reaction in msg_reactions:
         await msg.add_reaction(reaction)
 
-    def get_reaction(_reaction, _user):
+    def check_reaction(_reaction, _user):
         return _user == hero.ctx.author and str(_reaction.emoji) in msg_reactions
 
-    reaction, user = await bot.wait_for('reaction_add', check=get_reaction)
+    reaction, user = await bot.wait_for('reaction_add', check=check_reaction)
     await reaction.message.delete()
 
     return reaction, user
@@ -182,5 +187,6 @@ async def game(ctx):
 @bot.event
 async def on_ready():
     print("Logged in as", bot.user)
+
 
 bot.run(TOKEN)

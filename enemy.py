@@ -53,3 +53,5 @@ class Enemy(Hero):
             hero.gold += self.gold
             hero.xp += self.xp
             return self.xp, self.gold
+
+

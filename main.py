@@ -13,6 +13,7 @@ async def adventure(hero):
     dice = random.randint(0, 100)
     if dice <= 90:
         enemy = Enemy(hero)
+        enemy.set_enemy_lvl(hero)
         await battle(hero, enemy)
 
     elif 90 < dice <= 100:
@@ -30,10 +31,9 @@ async def hero_info(hero):
 
     if hero.battle:
         hero.battle = False
-        amount = hero.heal(hero.lvl * 5)
-        await hero.ctx.send(f"```You have been healed for {amount} health.```", delete_after=5)
+        hero.cur_hp = hero.max_hp
 
-    msg = f"```[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n" \
+    msg = f"```css\n[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n" \
           f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n" \
           f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n" \
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n" \
@@ -42,29 +42,45 @@ async def hero_info(hero):
           f"[ INVENTORY ]\n{inventory}\n\n" \
           f"Please choose your action.```"
 
-    msg_reactions = {'🗺️': 'adventure', '🔨': 'repair', '💰': 'sell'}
+    msg_reactions = {'🗺️': 'adventure', '💰': 'sell'}
+    msg_reactions = hero.set_item_reactions(msg_reactions)
+
     reaction, user = await get_reaction(hero, msg, msg_reactions)
 
     if str(reaction) == '🗺️':
         await adventure(hero)
 
-    elif str(reaction) == '🔨':
-        await hero.ctx.send(f"```You repaired all broken items. (Not finished)```", delete_after=5)
-        await hero_info(hero)
-
     elif str(reaction) == '💰':
         await vendor(hero)
 
+    elif str(reaction) == '🥇':
+        message = hero.equip_item(hero.inventory[0])
+        await hero.ctx.send(message, delete_after=5)
+    elif str(reaction) == '🥈':
+        message = hero.equip_item(hero.inventory[1])
+        await hero.ctx.send(message, delete_after=5)
+    elif str(reaction) == '🥉':
+        message = hero.equip_item(hero.inventory[2])
+        await hero.ctx.send(message, delete_after=5)
+
+
+    await hero_info(hero)
 
 async def battle(hero, enemy):
     hero.battle = True
-    msg = f"```[ BATTLE ]\n" \
-          f"{hero.name}\tvs\t{enemy.name}\n" \
-          f"Lvl {hero.lvl}\t\t\tLvl {enemy.lvl}\n" \
-          f"HP {hero.cur_hp}/{hero.max_hp}\t\t HP {enemy.cur_hp}/{enemy.max_hp}\n\n" \
+    msg = f"```css\n[ BATTLE ]\n" \
+          f"{hero.name: <12}{'vs': <7}{enemy.name}\n" \
+          f"Lvl {hero.lvl: <15}Lvl {enemy.lvl}\n" \
+          f"HP {hero.cur_hp}/{hero.max_hp}{'HP ': >14}{enemy.cur_hp}/{enemy.max_hp}\n\n" \
           f"Choose your action.```"
 
-    msg_reactions = {'🗡️': 'attack', '🏃': 'flee', '🎲': 'dice'}
+    msg_reactions = {'🗡️': 'attack'}
+    for value in hero.inventory:
+        if value['name'] == 'Health Potion':
+            msg_reactions['❤️'] = 'Health Potion'
+    msg_reactions['🏃'] = 'flee'
+    msg_reactions['🎲'] = 'dice'
+
     reaction, user = await get_reaction(hero, msg, msg_reactions)
 
     if str(reaction) == '🗡️':
@@ -83,17 +99,21 @@ async def battle(hero, enemy):
                 await hero.ctx.send(message, delete_after=5)
 
             await hero_info(hero)
-            return
         else:
             enemy_attack = Enemy.enemy_attack(enemy, hero)
+
+            await hero.ctx.send(f"```{hero_attack}\n{enemy_attack}```", delete_after=5)
 
             if hero.cur_hp <= 0:
                 await hero.ctx.send(f'```[ DEATH ]\nYou have been slain by {enemy.name}.```', delete_after=5)
                 await asyncio.sleep(3)
                 await game(hero.ctx)
 
-            await hero.ctx.send(f"```{hero_attack}\n{enemy_attack}```", delete_after=5)
+        await battle(hero, enemy)
 
+    elif str(reaction) == '❤️':
+        message = hero.use_potion('health')
+        await hero.ctx.send(message, delete_after=5)
         await battle(hero, enemy)
 
 
@@ -106,10 +126,9 @@ async def battle(hero, enemy):
             hero.flee = False
             await hero_info(hero)
 
-
     elif str(reaction) == '🎲':
         if random.random() < 1 / 2:
-            hero.heal(hero.max_hp)
+            hero.cur_hp = hero.max_hp
             await hero.ctx.send(f"```You have been restored by the gods.```", delete_after=6)
             await battle(hero, enemy)
         else:
@@ -117,14 +136,14 @@ async def battle(hero, enemy):
             await asyncio.sleep(3)
             await game(hero.ctx)
 
-
 async def vendor(hero):
-    msg_reactions, item_reactions = hero.set_item_reactions()
-    msg = f"```[ VENDOR ]\nBuy or sell items.\n\n"
+    msg_reactions, item_reactions = hero.set_vendor_reactions()
+
+    msg = f"```css\n[ VENDOR ]\nBuy or sell items.\n\n"
     for key, val in msg_reactions.items():
         msg += f"{key} {val} \n"
 
-    msg += f"\n[ INVENTORY ]\n{hero.get_inventory_items()}\n" \
+    msg += f"\nGold: {hero.gold}\n\n[ INVENTORY ]\n{hero.get_inventory_items()}\n" \
            f"What would you like to do?\n\n```"
 
     reaction, user = await get_reaction(hero, msg, msg_reactions)
@@ -138,7 +157,6 @@ async def vendor(hero):
         await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
 
-    # GET OUR REACTIONS FOR ITEMS.
     for i, k in enumerate(item_reactions.values()):
         if str(reaction) == k:
             message = hero.sell_item(i)
@@ -166,7 +184,7 @@ async def get_reaction(hero, msg, msg_reactions):
 
 @bot.command(aliases=['g'])
 async def game(ctx):
-    msg = await ctx.send("```[ PyQuest ]\nWelcome to PyQuest\n\nPlease choose your hero.```")
+    msg = await ctx.send("```css\n[ PyQuest ]\nWelcome to PyQuest\n\nPlease choose your hero.```")
     msg_reactions = {'🛡️': 'Warrior', '🏹': 'Ranger', '🧙‍♂️': 'Wizard'}
     for reaction in msg_reactions:
         await msg.add_reaction(reaction)

@@ -4,10 +4,10 @@ from item import random_item_list
 class Hero:
     def __init__(self, ctx):
         self.ctx = ctx
-        self.lvl = 1
         self.xp = 0
+        self.lvl = 1
         self.next_lvl = 8
-        self.gold = 0
+        self.gold = 100
         self.battle = False
         self.flee = False
 
@@ -27,7 +27,7 @@ class Hero:
         self.dodge = 0
         self.critical = 0
 
-        self.inventory = [random.choice(random_item_list), random.choice(random_item_list)]
+        self.inventory = [random_item_list[0], random_item_list[2]]
 
         self.equipped_weapon = {}
         self.equipped_shield = {}
@@ -56,7 +56,7 @@ class Hero:
     def hero_flee(self):
         if self.flee:
             message = "```You may only flee once.```"
-        elif random.random() < 1/3:
+        elif random.random() < 1:
             self.battle = False
             message = "```You managed to escape.```"
         else:
@@ -64,12 +64,6 @@ class Hero:
             message = "```You failed to escape.```"
 
         return message
-
-    def heal(self, amount):
-        self.cur_hp += amount
-        if self.cur_hp > self.max_hp:
-            self.cur_hp = self.max_hp
-        return amount
 
     def get_level(self):
         if self.xp > self.next_lvl:
@@ -109,7 +103,7 @@ class Hero:
 
     def buy_item(self, item):
         if self.gold >= item['value']:
-            if len(self.inventory) < 4:
+            if len(self.inventory) < 3:
                 self.inventory.append(item)
                 self.gold -= item['value']
             else:
@@ -118,28 +112,71 @@ class Hero:
             return f"```You bought {item['name']} for {item['value']} gold.```"
         return f"```You can't afford {item['name']}.```"
 
-    # TODO
-    def use_item(self, item):
-        if item.name in self.inventory:
+    def equip_item(self, item):
+        message = f"```You equipped {item['name']}```"
 
-            return item
+        if item['type'] == 'Weapon':
+            self.inventory.append(self.equipped_weapon)
+            self.equipped_weapon = item
 
-    # TODO
-    def equip_item(self):
-        pass
+        elif item['type'] == 'Offhand':
+            self.inventory.append(self.equipped_shield)
+            self.equipped_shield = item
 
-    def set_item_reactions(self):
-        msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion'}
-        item_reactions = {0: '💶', 1: '💷', 2: '💵'}
+        elif item['type'] == 'Armor':
+            self.inventory.append(self.equipped_armor)
+            self.equipped_armor = item
+
+        elif item['type'] == 'Consumable':
+            message = self.use_potion(item)
+
+        for i, d in enumerate(self.inventory):
+            if d == item:
+                del self.inventory[i]
+
+        return message
+
+    def use_potion(self, _type):
+        for i, d in enumerate(self.inventory):
+            del self.inventory[i]
+
+            if _type == 'health':
+                if d['name'] == 'Health Potion':
+                    self.cur_hp += d['stats']['health']
+                    if self.cur_hp > self.max_hp:
+                        self.cur_hp = self.max_hp
+
+                    return f"```You regained {d['stats']['health']} points of health.```"
+
+            elif _type == 'mana':
+                if d['name'] == 'Mana Potion':
+                    self.cur_mana += d['stats']['mana']
+                    if self.cur_mana > self.max_mana:
+                        self.cur_mana = self.max_mana
+
+                    return f"```You regained {d['stats']['health']} points of health.```"
+
+
+    def set_item_reactions(self, msg_reactions):
+        item_reactions = {0: '🥇', 1: '🥈', 2: '🥉', 3: '🏅'}
         for i, item in enumerate(self.inventory):
-            msg_reactions[item_reactions[i]] = f"Sell {item['name']}"
-        return msg_reactions, item_reactions
+            msg_reactions[item_reactions[i]] = item['name']
+
+        return msg_reactions
+
+    def set_vendor_reactions(self):
+        msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion'}
+        vendor_reactions = {0: '💶', 1: '💷', 2: '💵', 3: '💸'}
+        for i, item in enumerate(self.inventory):
+            msg_reactions[vendor_reactions[i]] = f"Sell {item['name']}"
+
+        return msg_reactions, vendor_reactions
 
     def get_inventory_items(self):
         stats = {'attack': ' 🗡️', 'defense': ' 🦾', 'critical': ' 🤺', 'dodge': ' 🤸‍♂', 'health': ' ❤️'}
         inventory = ""
-        for item in self.inventory:
-            inventory += f"{item['name']: <16}"
+        for i, item in enumerate(self.inventory):
+            inventory += f"{i+1}. {item['name']: <16}"
             for k, v in item['stats'].items():
                 inventory += stats[k] + str(v)
             inventory += "\n"
@@ -180,6 +217,7 @@ class Warrior(Hero):
     def __init__(self, ctx):
         super().__init__(ctx)
         self.name = ctx.author.name
+        self.lvl = 1
         self.type = 'Warrior'
         self.base_hp = 15
         self.base_mana = 0

@@ -5,8 +5,7 @@ import random
 class Enemy(Hero):
     def __init__(self, ctx):
         super().__init__(ctx)
-        self.name = random.choice(['a giant rat', 'a small coyote', 'a basilisk'])
-        self.lvl = random.randint(round(self.lvl * 0.75), int(self.lvl * 1.25))
+        self.name = random.choice(['giant rat', 'small coyote', 'basilisk'])
         self.xp = random.randint(2 * self.lvl, 5 * self.lvl)
         self.gold = random.randint(1, 3 * self.lvl)
 
@@ -33,6 +32,9 @@ class Enemy(Hero):
         self.equipped_shield = {}
         self.equipped_armor = {}
 
+    def set_enemy_lvl(self, hero):
+        self.lvl = random.randint(round(hero.lvl * 0.75), int(hero.lvl * 1.25))
+
 
     def enemy_attack(self, hero):
         enemy_damage = random.randint(0, 4 * self.lvl)
@@ -53,5 +55,3 @@ class Enemy(Hero):
             hero.gold += self.gold
             hero.xp += self.xp
             return self.xp, self.gold
-
-

@@ -137,7 +137,7 @@ async def battle(hero, enemy):
 
     for i, v in enumerate(msg_reactions):
         if str(reaction) == v:
-            message = hero.use_potion(hero.inventory[i-1], i-1)
+            message = hero.use_item(hero.inventory[i - 1], i - 1)
             await hero.ctx.send(message, delete_after=5)
             await battle(hero, enemy)
 

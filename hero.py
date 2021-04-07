@@ -114,7 +114,7 @@ class Hero:
                      'equipped_armor': self.equipped_armor}
 
         for k, v in item_type.items():
-            if item['type'] == k.replace('equipped_', '').lower():
+            if item['type'] == k.replace('equipped_', ''):
                 self.inventory.append(v)
                 del self.inventory[i]
                 setattr(self, k, item)
@@ -124,7 +124,7 @@ class Hero:
 
         return message
 
-    def use_potion(self, item, i):
+    def use_item(self, item, i):
         if item['name'] == 'Health Potion':
             self.cur_hp += item['stats']['health']
             if self.cur_hp > self.max_hp:

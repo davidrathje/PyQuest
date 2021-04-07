@@ -10,6 +10,9 @@ bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
 
 async def adventure(hero):
+    """
+    Main adventure loop. Random to see what kind of adventure. Battle, Riddle, Quest?
+    """
     dice = random.randint(0, 100)
     if dice <= 90:
         enemy = Enemy(hero)
@@ -23,6 +26,9 @@ async def adventure(hero):
 
 
 async def hero_info(hero):
+    """
+    Character info screen. Displays data about our character.
+    """
     weapon, shield, armor = hero.get_equipped_items()
 
     hero.set_equipped_stats()
@@ -30,6 +36,7 @@ async def hero_info(hero):
     inventory = hero.get_inventory_items()
 
     if hero.battle:
+        print("WTF?")
         hero.battle = False
         hero.cur_hp = hero.max_hp
 
@@ -47,27 +54,23 @@ async def hero_info(hero):
 
     reaction, user = await get_reaction(hero, msg, msg_reactions)
 
-    if str(reaction) == '🗺️':
-        await adventure(hero)
+    for i, k in enumerate(msg_reactions):
+        if str(reaction) == '🗺️':
+            await adventure(hero)
 
-    elif str(reaction) == '💰':
-        await vendor(hero)
+        elif str(reaction) == '💰':
+            await vendor(hero)
 
-    elif str(reaction) == '🥇':
-        message = hero.equip_item(hero.inventory[0])
-        await hero.ctx.send(message, delete_after=5)
-
-    elif str(reaction) == '🥈':
-        message = hero.equip_item(hero.inventory[1])
-        await hero.ctx.send(message, delete_after=5)
-
-    elif str(reaction) == '🥉':
-        message = hero.equip_item(hero.inventory[2])
-        await hero.ctx.send(message, delete_after=5)
+        elif str(reaction) == k:
+            message = hero.equip_item(hero.inventory[i-2])
+            await hero.ctx.send(message, delete_after=5)
 
     await hero_info(hero)
 
 async def battle(hero, enemy):
+    """
+    Battle loop. 1 round per iteration, check input and calculate outcome.
+    """
     hero.battle = True
     msg = f"```css\n[ BATTLE ]\n" \
           f"{hero.name: <12}{'vs': <7}{enemy.name}\n" \
@@ -117,15 +120,6 @@ async def battle(hero, enemy):
 
         await battle(hero, enemy)
 
-    elif str(reaction) == '❤️':
-        message = hero.use_potion('health')
-        await hero.ctx.send(message, delete_after=5)
-        await battle(hero, enemy)
-
-    elif str(reaction) == '⚗️':
-        message = hero.use_potion('mana')
-        await hero.ctx.send(message, delete_after=5)
-        await battle(hero, enemy)
 
     elif str(reaction) == '🏃':
         message = hero.hero_flee()
@@ -146,7 +140,17 @@ async def battle(hero, enemy):
             await asyncio.sleep(3)
             await game(hero.ctx)
 
+    for i, v in enumerate(msg_reactions):
+        if str(reaction) == v:
+            message = hero.use_potion(hero.inventory[i], i)
+            await hero.ctx.send(message, delete_after=5)
+            await battle(hero, enemy)
+
+
 async def vendor(hero):
+    """
+    A vendor for buying potions and selling gear.
+    """
     msg_reactions, item_reactions = hero.set_vendor_reactions()
 
     msg = f"```css\n[ VENDOR ]\nBuy or sell items.\n\n"
@@ -179,6 +183,13 @@ async def vendor(hero):
 
 
 async def get_reaction(hero, msg, msg_reactions):
+    """
+    A function for adding reactions to a game screen, and handle input from player.
+    :param hero: Our hero (ctx)
+    :param msg: The message that needs to be displayed
+    :param msg_reactions: What reactions should be added to the message.
+    :return: True returns reaction and user for current message.
+    """
     msg = await hero.ctx.send(msg)
     for reaction in msg_reactions:
         await msg.add_reaction(reaction)
@@ -194,6 +205,10 @@ async def get_reaction(hero, msg, msg_reactions):
 
 @bot.command(aliases=['g'])
 async def game(ctx):
+    """
+    Create a new game.
+    Store data from context as a Hero class. (Warrior, Ranger, Wizard)
+    """
     msg = await ctx.send("```css\n[ PyQuest ]\nWelcome to PyQuest\n\nPlease choose your hero.```")
     msg_reactions = {'🛡️': 'Warrior', '🏹': 'Ranger', '🧙‍♂️': 'Wizard'}
     for reaction in msg_reactions:

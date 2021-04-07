@@ -67,6 +67,7 @@ random_item_list = {
         'value': 3,
         'stats': {'attack': 4, 'dodge': 5}
         },
+
     10: {'name': 'Lantern',
          'type': 'Offhand',
          'value': 2,

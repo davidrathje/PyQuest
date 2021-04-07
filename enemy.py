@@ -2,6 +2,7 @@ from hero import Hero
 from item import random_item_list
 import random
 
+
 class Enemy(Hero):
     def __init__(self, ctx):
         super().__init__(ctx)
@@ -35,7 +36,6 @@ class Enemy(Hero):
     def set_enemy_lvl(self, hero):
         self.lvl = random.randint(round(hero.lvl * 0.75), int(hero.lvl * 1.25))
 
-
     def enemy_attack(self, hero):
         enemy_damage = random.randint(0, 4 * self.lvl)
         hero.cur_hp -= enemy_damage
@@ -48,7 +48,6 @@ class Enemy(Hero):
             enemy_attack = f"{self.name} hits you for {enemy_damage} points of damage."
 
         return enemy_attack
-
 
     def enemy_died(self, hero):
         if self.cur_hp <= 0:

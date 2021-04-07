@@ -109,21 +109,15 @@ class Hero:
 
     def equip_item(self, item, i):
         message = f"```You equipped {item['name']}```"
-        item_type = {'Weapon': self.equipped_weapon,
-                     'Offhand': self.equipped_armor,
-                     'Armor': self.equipped_armor}
+        item_type = {'equipped_weapon': self.equipped_weapon,
+                     'equipped_offhand': self.equipped_armor,
+                     'equipped_armor': self.equipped_armor}
 
         for k, v in item_type.items():
-            if item['type'] == k:
+            if item['type'] == k.replace('equipped_', '').lower():
                 self.inventory.append(v)
                 del self.inventory[i]
-
-                if item['type'] == 'Weapon':
-                    self.equipped_weapon = item
-                elif item['type'] == 'Offhand':
-                    self.equipped_offhand = item
-                elif item['type'] == 'Armor':
-                    self.equipped_armor = item
+                setattr(self, k, item)
 
             elif item['type'] == 'Consumable':
                 return "```You can't equip a potion. Try using them in a fight.```"
@@ -155,7 +149,7 @@ class Hero:
         return msg_reactions
 
     def set_vendor_reactions(self):
-        msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion'}
+        msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion', '⚗️': 'Buy Mana Potion'}
         vendor_reactions = {0: '💶', 1: '💷', 2: '💵', 3: '💸'}
         for i, item in enumerate(self.inventory):
             msg_reactions[vendor_reactions[i]] = f"Sell {item['name']}"

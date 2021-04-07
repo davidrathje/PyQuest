@@ -56,10 +56,11 @@ async def hero_info(hero):
             await vendor(hero)
 
         elif str(reaction) == k:
-            message = hero.equip_item(hero.inventory[i-2], i-2)
+            message = hero.equip_item(hero.inventory[i - 2], i - 2)
             await hero.ctx.send(message, delete_after=5)
 
     await hero_info(hero)
+
 
 async def battle(hero, enemy):
     """
@@ -108,7 +109,7 @@ async def battle(hero, enemy):
             await hero.ctx.send(f"```{hero_attack}\n{enemy_attack}```", delete_after=5)
 
             if hero.cur_hp <= 0:
-                await hero.ctx.send(f'```[ DEATH ]\nYou have been slain by {enemy.name}.```', delete_after=5)
+                await hero.ctx.send(f'```css\n[ DEATH ]\nYou have been slain by {enemy.name}.```', delete_after=5)
                 await asyncio.sleep(3)
                 await game(hero.ctx)
 
@@ -130,13 +131,13 @@ async def battle(hero, enemy):
             await hero.ctx.send(f"```You have been restored by the gods.```", delete_after=6)
             await battle(hero, enemy)
         else:
-            await hero.ctx.send(f"```[ DEATH ]\nYou have been slain by the gods.```", delete_after=6)
+            await hero.ctx.send(f"```css\n[ DEATH ]\nYou have been slain by the gods.```", delete_after=6)
             await asyncio.sleep(3)
             await game(hero.ctx)
 
     for i, v in enumerate(msg_reactions):
         if str(reaction) == v:
-            message = hero.use_potion(hero.inventory[i], i)
+            message = hero.use_potion(hero.inventory[i-1], i-1)
             await hero.ctx.send(message, delete_after=5)
             await battle(hero, enemy)
 
@@ -160,8 +161,14 @@ async def vendor(hero):
         await hero_info(hero)
 
     # TODO
-    if str(reaction) == '❤️':
+    elif str(reaction) == '❤️':
         message = hero.buy_item(random_item_list[0])
+        await hero.ctx.send(message, delete_after=5)
+        await vendor(hero)
+
+
+    elif str(reaction) == '⚗️':
+        message = hero.buy_item(random_item_list[1])
         await hero.ctx.send(message, delete_after=5)
         await vendor(hero)
 

@@ -84,7 +84,7 @@ class Hero:
             return True
 
     def get_item(self):
-        if len(self.inventory) <= 3:
+        if len(self.inventory) < 3:
             item = random.choice(random_item_list)
             self.inventory.append(item)
             return f"```You found a {item['name']}.```"

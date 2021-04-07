@@ -11,7 +11,7 @@ bot = commands.Bot(command_prefix=PREFIX, case_insensitive=True)
 
 async def adventure(hero):
     """
-    Main adventure loop. Random to see what kind of adventure. Battle, Riddle, Quest?
+    Main adventure loop. Random to see what kind of adventure. Battle, riddle, item?
     """
     dice = random.randint(0, 100)
     if dice <= 90:

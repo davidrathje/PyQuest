@@ -28,24 +28,23 @@ class Hero:
         self.dodge = 0
         self.critical = 0
 
-        self.inventory = [random.choice(random_item_list), random_item_list[1]]
+        self.inventory = [random_item_list[2], random_item_list[4], random_item_list[5]]
 
         self.equipped_weapon = {}
-        self.equipped_shield = {}
+        self.equipped_offhand = {}
         self.equipped_armor = {}
 
     def hero_attack(self, enemy):
-        hero_damage = random.randint(0, 4 * self.lvl)
-        hero_attack = {'miss': f"You miss {enemy.name}.",
-                       'point': f"You attack {enemy.name} for {hero_damage} point of damage.",
-                       'points': f"You attack {enemy.name} for {hero_damage} points of damage."}
+        hero_damage = random.randint(0, 1 * (self.lvl + self.attack))
 
-        if hero_damage == 0:
-            hero_attack = hero_attack['miss']
-        elif hero_damage == 1:
-            hero_attack = hero_attack['point']
-        elif hero_damage > 1:
-            hero_attack = hero_attack['points']
+        hero_attack = {0: f"You miss {enemy.name}.",
+                       1: f"You attack {enemy.name} for {hero_damage} point of damage.",
+                       2: f"You attack {enemy.name} for {hero_damage} points of damage."}
+
+        for k, v in hero_attack.items():
+            if hero_damage == k:
+                hero_attack = v
+
             if random.randint(int(self.critical * 0.2), 3) == 3:
                 hero_damage *= 2
                 hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
@@ -58,12 +57,12 @@ class Hero:
         if self.flee:
             message = "```You may only flee once.```"
         elif random.random() < 1 / 3:
-            self.battle = False
             message = "```You managed to escape.```"
+            self.battle = False
+            self.flee = False
         else:
-            self.flee = True
             message = "```You failed to escape.```"
-
+            self.flee = True
         return message
 
     def get_level(self):
@@ -82,16 +81,14 @@ class Hero:
 
             self.cur_hp = self.max_hp
             self.cur_mana = self.max_mana
-
             return True
 
     def get_item(self):
-        if len(self.inventory) > 3:
-            return "```Your inventory is full.```"
-        else:
+        if len(self.inventory) <= 3:
             item = random.choice(random_item_list)
             self.inventory.append(item)
             return f"```You found a {item['name']}.```"
+        return "```Your inventory is full.```"
 
     def sell_item(self, item):
         for i, d in enumerate(self.inventory):
@@ -107,11 +104,10 @@ class Hero:
                 self.gold -= item['value']
             else:
                 return f"```Your inventory is full.```"
-
             return f"```You bought {item['name']} for {item['value']} gold.```"
         return f"```You can't afford {item['name']}.```"
 
-    def equip_item(self, item):
+    def equip_item(self, item, i):
         message = f"```You equipped {item['name']}```"
         item_type = {'Weapon': self.equipped_weapon,
                      'Offhand': self.equipped_armor,
@@ -120,13 +116,17 @@ class Hero:
         for k, v in item_type.items():
             if item['type'] == k:
                 self.inventory.append(v)
+                del self.inventory[i]
+
+                if item['type'] == 'Weapon':
+                    self.equipped_weapon = item
+                elif item['type'] == 'Offhand':
+                    self.equipped_offhand = item
+                elif item['type'] == 'Armor':
+                    self.equipped_armor = item
 
             elif item['type'] == 'Consumable':
                 return "```You can't equip a potion. Try using them in a fight.```"
-
-        for i, d in enumerate(self.inventory):
-            if d == item:
-                del self.inventory[i]
 
         return message
 
@@ -180,15 +180,15 @@ class Hero:
         for k, v in self.equipped_weapon['stats'].items():
             weapon += stats[k] + str(v)
 
-        shield = f"{self.equipped_shield['name']: <16}"
-        for k, v in self.equipped_shield['stats'].items():
-            shield += stats[k] + str(v)
+        offhand = f"{self.equipped_offhand['name']: <16}"
+        for k, v in self.equipped_offhand['stats'].items():
+            offhand += stats[k] + str(v)
 
         armor = f"{self.equipped_armor['name']: <16}"
         for k, v in self.equipped_armor['stats'].items():
             armor += stats[k] + str(v)
 
-        return weapon, shield, armor
+        return weapon, offhand, armor
 
     def set_base_stats(self):
         self.max_hp = self.base_hp
@@ -200,7 +200,7 @@ class Hero:
 
     def set_equipped_stats(self):
         self.set_base_stats()
-        for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_shield['stats']:
+        for d in self.equipped_weapon['stats'], self.equipped_armor['stats'], self.equipped_offhand['stats']:
             for k, v in d.items():
                 setattr(self, k, getattr(self, k) + v)
 
@@ -221,7 +221,7 @@ class Warrior(Hero):
         self.base_crit = 10
 
         self.equipped_weapon = random_item_list[9]
-        self.equipped_shield = random_item_list[8]
+        self.equipped_offhand = random_item_list[8]
         self.equipped_armor = random_item_list[7]
 
 
@@ -240,7 +240,7 @@ class Ranger(Hero):
         self.base_crit = 10
 
         self.equipped_weapon = random_item_list[2]
-        self.equipped_shield = random_item_list[5]
+        self.equipped_offhand = random_item_list[5]
         self.equipped_armor = random_item_list[6]
 
 
@@ -259,5 +259,5 @@ class Wizard(Hero):
         self.base_crit = 7
 
         self.equipped_weapon = random_item_list[3]
-        self.equipped_shield = random_item_list[10]
+        self.equipped_offhand = random_item_list[10]
         self.equipped_armor = random_item_list[4]

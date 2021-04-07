@@ -29,23 +29,17 @@ async def hero_info(hero):
     """
     Character info screen. Displays data about our character.
     """
-    weapon, shield, armor = hero.get_equipped_items()
-
+    hero.cur_hp = hero.max_hp
+    weapon, offhand, armor = hero.get_equipped_items()
     hero.set_equipped_stats()
-
     inventory = hero.get_inventory_items()
-
-    if hero.battle:
-        print("WTF?")
-        hero.battle = False
-        hero.cur_hp = hero.max_hp
 
     msg = f"```css\n[ {hero.name} ]\nLvl {hero.lvl} {hero.type}\n\n" \
           f"Health: {hero.cur_hp: >4}{'Mana:': >10} {hero.cur_mana: >7}\n" \
           f"Defense: {hero.defense:>3} {'Dodge:': >10} {hero.dodge: >6}\n" \
           f"Attack: {hero.attack: >4} {'Critical:': >13} {hero.critical: >3}\n\n" \
           f"Gold: {hero.gold: >6}{'Exp:': >9} {hero.xp: >5}/{hero.next_lvl}\n\n" \
-          f"[ GEAR ]\n{weapon}\n{shield}\n{armor}\n\n" \
+          f"[ GEAR ]\n{weapon}\n{offhand}\n{armor}\n\n" \
           f"[ INVENTORY ]\n{inventory}\n\n" \
           f"Please choose your action.```"
 
@@ -62,7 +56,7 @@ async def hero_info(hero):
             await vendor(hero)
 
         elif str(reaction) == k:
-            message = hero.equip_item(hero.inventory[i-2])
+            message = hero.equip_item(hero.inventory[i-2], i-2)
             await hero.ctx.send(message, delete_after=5)
 
     await hero_info(hero)
@@ -184,11 +178,7 @@ async def vendor(hero):
 
 async def get_reaction(hero, msg, msg_reactions):
     """
-    A function for adding reactions to a game screen, and handle input from player.
-    :param hero: Our hero (ctx)
-    :param msg: The message that needs to be displayed
-    :param msg_reactions: What reactions should be added to the message.
-    :return: True returns reaction and user for current message.
+    A function for adding reactions to a game message, and handle input from player.
     """
     msg = await hero.ctx.send(msg)
     for reaction in msg_reactions:

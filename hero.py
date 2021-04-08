@@ -35,19 +35,24 @@ class Hero:
         self.equipped_armor = {}
 
     def hero_attack(self, enemy):
-        hero_damage = random.randint(0, 1 * (self.lvl + self.attack))
+        # Calculate damage
+        hero_damage = random.randint(0, int(4 * ((self.lvl + self.attack) - (enemy.lvl + enemy.defense))))
 
         hero_attack = {0: f"You miss {enemy.name}.",
                        1: f"You attack {enemy.name} for {hero_damage} point of damage.",
                        2: f"You attack {enemy.name} for {hero_damage} points of damage."}
 
+        # Check if dodge
+        if random.randint(0, self.attack - enemy.defense) == 0:
+            hero_attack = {0: f"{enemy.name} dodged your attack."}
+
         for k, v in hero_attack.items():
-            if hero_damage == k:
+            if hero_damage >= k:
                 hero_attack = v
 
-            if random.randint(int(self.critical * 0.2), 3) == 3:
-                hero_damage *= 2
-                hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
+                if random.randint(int(self.critical * 0.2), 3) == 3:
+                    hero_damage *= int(1.5)
+                    hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
 
         enemy.cur_hp -= hero_damage
 
@@ -72,7 +77,7 @@ class Hero:
             self.next_lvl *= self.lvl
 
             self.base_hp = int(self.max_hp + self.lvl * 1.5)
-            self.base_mana = int(self.max_mana + self.lvl * 15)
+            self.base_mana = int(self.max_mana + (1.5 * self.base_mana))
 
             self.base_atk += int(self.base_atk * 0.2)
             self.base_def += int(self.base_atk * 0.2)
@@ -109,18 +114,24 @@ class Hero:
 
     def equip_item(self, item, i):
         message = f"```You equipped {item['name']}```"
-        item_type = {'equipped_weapon': self.equipped_weapon,
-                     'equipped_offhand': self.equipped_armor,
-                     'equipped_armor': self.equipped_armor}
 
-        for k, v in item_type.items():
-            if item['type'] == k.replace('equipped_', ''):
-                self.inventory.append(v)
-                del self.inventory[i]
-                setattr(self, k, item)
+        if item['type'] == 'Consumable':
+            return "```You can't equip a potion. Try using it in a fight.```"
 
-            elif item['type'] == 'Consumable':
-                return "```You can't equip a potion. Try using them in a fight.```"
+        elif item['type'] == 'Weapon':
+            del self.inventory[i]
+            self.inventory.append(self.equipped_weapon)
+            self.equipped_weapon = item
+
+        elif item['type'] == 'Offhand':
+            del self.inventory[i]
+            self.inventory.append(self.equipped_offhand)
+            self.equipped_offhand = item
+
+        elif item['type'] == 'Armor':
+            del self.inventory[i]
+            self.inventory.append(self.equipped_armor)
+            self.equipped_armor = item
 
         return message
 
@@ -146,7 +157,7 @@ class Hero:
         for i, item in enumerate(self.inventory):
             msg_reactions[item_reactions[i]] = item['name']
 
-        return msg_reactions
+        return msg_reactions, item_reactions
 
     def set_vendor_reactions(self):
         msg_reactions = {'🗺️': 'Continue adventure', '❤️': 'Buy Health Potion', '⚗️': 'Buy Mana Potion'}

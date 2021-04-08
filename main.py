@@ -29,7 +29,7 @@ async def hero_info(hero):
     """
     Character info screen. Displays data about our character.
     """
-    hero.cur_hp = hero.max_hp
+    hero.cur_hp = hero.base_hp
     weapon, offhand, armor = hero.get_equipped_items()
     hero.set_equipped_stats()
     inventory = hero.get_inventory_items()
@@ -44,19 +44,20 @@ async def hero_info(hero):
           f"Please choose your action.```"
 
     msg_reactions = {'🗺️': 'adventure', '💰': 'sell'}
-    msg_reactions = hero.set_item_reactions(msg_reactions)
+    msg_reactions, item_reactions = hero.set_item_reactions(msg_reactions)
 
     reaction, user = await get_reaction(hero, msg, msg_reactions)
 
-    for i, k in enumerate(msg_reactions):
-        if str(reaction) == '🗺️':
-            await adventure(hero)
 
-        elif str(reaction) == '💰':
-            await vendor(hero)
+    if str(reaction) == '🗺️':
+        await adventure(hero)
 
-        elif str(reaction) == k:
-            message = hero.equip_item(hero.inventory[i - 2], i - 2)
+    elif str(reaction) == '💰':
+        await vendor(hero)
+
+    for i, v in enumerate(item_reactions.values()):
+        if str(reaction) == v:
+            message = hero.equip_item(hero.inventory[i], i)
             await hero.ctx.send(message, delete_after=5)
 
     await hero_info(hero)
@@ -70,8 +71,8 @@ async def battle(hero, enemy):
     msg = f"```css\n[ BATTLE ]\n" \
           f"{hero.name: <12}{'vs': <7}{enemy.name}\n" \
           f"Lvl {hero.lvl: <15}Lvl {enemy.lvl}\n" \
-          f"HP {hero.cur_hp}/{hero.max_hp}{'HP ': >14}{enemy.cur_hp}/{enemy.max_hp}\n" \
-          f"Mana {hero.cur_mana}/{hero.max_mana}{'Mana ': >16}{enemy.cur_hp}/{enemy.max_hp}\n\n" \
+          f"HP{hero.cur_hp: >3}/{hero.max_hp: <13}{'HP'}{enemy.cur_hp: >3}/{enemy.max_hp}\n" \
+          f"MP{hero.cur_mana: >3}/{hero.max_mana: <13}{'MP'}{enemy.cur_mana: >3}/{enemy.max_mana}\n\n" \
           f"Choose your action.```"
 
     msg_reactions = {'🗡️': 'attack'}
@@ -137,7 +138,7 @@ async def battle(hero, enemy):
 
     for i, v in enumerate(msg_reactions):
         if str(reaction) == v:
-            message = hero.use_item(hero.inventory[i - 1], i - 1)
+            message = hero.use_item(hero.inventory[i - 2], i - 2)
             await hero.ctx.send(message, delete_after=5)
             await battle(hero, enemy)
 

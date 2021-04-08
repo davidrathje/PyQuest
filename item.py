@@ -8,56 +8,56 @@ class Item:
 
 random_item_list = {
     0: {'name': 'Health Potion',
-        'type': 'consumable',
+        'type': 'Consumable',
         'value': 5,
         'stats': {'health': 10}
         },
 
     1: {'name': 'Mana Potion',
-        'type': 'consumable',
+        'type': 'Consumable',
         'value': 5,
         'stats': {'mana': 10}
         },
 
     2: {'name': 'Short Bow',
-        'type': 'weapon',
+        'type': 'Weapon',
         'value': 2,
         'stats': {'attack': 1, 'critical': 2, 'dodge': 1}
         },
 
     3: {'name': 'Wand',
-        'type': 'weapon',
+        'type': 'Weapon',
         'value': 3,
         'stats': {'attack': 5, 'critical': 5, 'dodge': 5}
         },
 
     4: {'name': 'Cloth Robe',
-        'type': 'armor',
+        'type': 'Armor',
         'value': 5,
         'stats': {'attack': 4, 'defense': 3, 'dodge': 2}
         },
 
     5: {'name': 'Quiver',
-        'type': 'offhand',
+        'type': 'Offhand',
         'value': 3,
         'stats': {'critical': 3, 'dodge': 1}
         },
 
     6: {'name': 'Leather Armor',
-        'type': 'armor',
+        'type': 'Armor',
         'value': 5,
         'stats': {'defense': 3, 'dodge': 7}
         },
 
     7:
         {'name': 'Plate Armor',
-         'type': 'armor',
+         'type': 'Armor',
          'value': 2,
          'stats': {'defense': 7, 'dodge': 3}
          },
 
     8: {'name': 'Kite Shield',
-        'type': 'offhand',
+        'type': 'Offhand',
         'value': 1,
         'stats': {'defense': 5, 'dodge': 5}
         },
@@ -69,7 +69,7 @@ random_item_list = {
         },
 
     10: {'name': 'Lantern',
-         'type': 'offhand',
+         'type': 'Offhand',
          'value': 2,
          'stats': {'defense': 1, 'dodge': 1}
          }

@@ -127,7 +127,7 @@ async def battle(hero, enemy):
             await hero_info(hero)
 
     elif str(reaction) == '🎲':
-        if random.random() < 1 / 2:
+        if random.random() < 1 / 3:
             hero.cur_hp = hero.max_hp
             await hero.ctx.send(f"```You have been restored by the gods.```", delete_after=6)
             await battle(hero, enemy)

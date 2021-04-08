@@ -36,21 +36,22 @@ class Hero:
 
     def hero_attack(self, enemy):
         # Calculate damage
-        hero_damage = random.randint(0, int(4 * ((self.lvl + self.attack) - (enemy.lvl + enemy.defense))))
+        hero_damage = random.randint(0, int(4 + ((self.lvl + self.attack) - (enemy.lvl + enemy.defense))))
 
         hero_attack = {0: f"You miss {enemy.name}.",
                        1: f"You attack {enemy.name} for {hero_damage} point of damage.",
                        2: f"You attack {enemy.name} for {hero_damage} points of damage."}
 
-        # Check if dodge
+        # Check for dodge
         if random.randint(0, self.attack - enemy.defense) == 0:
             hero_attack = {0: f"{enemy.name} dodged your attack."}
+            hero_damage = 0
 
         for k, v in hero_attack.items():
             if hero_damage >= k:
                 hero_attack = v
 
-                if random.randint(int(self.critical * 0.2), 3) == 3:
+                if random.randint(0, 50 - self.attack) == 0:
                     hero_damage *= int(1.5)
                     hero_attack = f"You crunch {enemy.name} for {hero_damage} points of damage. (CRITICAL)"
 

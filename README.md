@@ -9,3 +9,4 @@ TOKEN = "your-discord-token"
 PREFIX = "!" (Pick w/e you want)
 
 
+Start the game with !game or whatever your prefix is.
